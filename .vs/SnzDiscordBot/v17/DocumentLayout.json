@@ -1,0 +1,133 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\\u0410\u043D\u0442\u043E\u043D\\RiderProjects\\SnzDiscordBot\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{5BC04F9B-6841-4140-998C-E9164C22A2F9}|SnzDiscordBot\\SnzDiscordBot.csproj|c:\\users\\\u0430\u043D\u0442\u043E\u043D\\riderprojects\\snzdiscordbot\\snzdiscordbot\\modules\\applicationmodule.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5BC04F9B-6841-4140-998C-E9164C22A2F9}|SnzDiscordBot\\SnzDiscordBot.csproj|solutionrelative:snzdiscordbot\\modules\\applicationmodule.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5BC04F9B-6841-4140-998C-E9164C22A2F9}|SnzDiscordBot\\SnzDiscordBot.csproj|c:\\users\\\u0430\u043D\u0442\u043E\u043D\\riderprojects\\snzdiscordbot\\snzdiscordbot\\models\\interactionmodels\\applicationmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5BC04F9B-6841-4140-998C-E9164C22A2F9}|SnzDiscordBot\\SnzDiscordBot.csproj|solutionrelative:snzdiscordbot\\models\\interactionmodels\\applicationmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5BC04F9B-6841-4140-998C-E9164C22A2F9}|SnzDiscordBot\\SnzDiscordBot.csproj|c:\\users\\\u0430\u043D\u0442\u043E\u043D\\riderprojects\\snzdiscordbot\\snzdiscordbot\\models\\interactionmodels\\cancelmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5BC04F9B-6841-4140-998C-E9164C22A2F9}|SnzDiscordBot\\SnzDiscordBot.csproj|solutionrelative:snzdiscordbot\\models\\interactionmodels\\cancelmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5BC04F9B-6841-4140-998C-E9164C22A2F9}|SnzDiscordBot\\SnzDiscordBot.csproj|c:\\users\\\u0430\u043D\u0442\u043E\u043D\\riderprojects\\snzdiscordbot\\snzdiscordbot\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5BC04F9B-6841-4140-998C-E9164C22A2F9}|SnzDiscordBot\\SnzDiscordBot.csproj|solutionrelative:snzdiscordbot\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5BC04F9B-6841-4140-998C-E9164C22A2F9}|SnzDiscordBot\\SnzDiscordBot.csproj|c:\\users\\\u0430\u043D\u0442\u043E\u043D\\riderprojects\\snzdiscordbot\\snzdiscordbot\\commandhandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5BC04F9B-6841-4140-998C-E9164C22A2F9}|SnzDiscordBot\\SnzDiscordBot.csproj|solutionrelative:snzdiscordbot\\commandhandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5BC04F9B-6841-4140-998C-E9164C22A2F9}|SnzDiscordBot\\SnzDiscordBot.csproj|c:\\users\\\u0430\u043D\u0442\u043E\u043D\\riderprojects\\snzdiscordbot\\snzdiscordbot\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{5BC04F9B-6841-4140-998C-E9164C22A2F9}|SnzDiscordBot\\SnzDiscordBot.csproj|solutionrelative:snzdiscordbot\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5BC04F9B-6841-4140-998C-E9164C22A2F9}|SnzDiscordBot\\SnzDiscordBot.csproj|c:\\users\\\u0430\u043D\u0442\u043E\u043D\\riderprojects\\snzdiscordbot\\snzdiscordbot\\modules\\settingsmodule.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5BC04F9B-6841-4140-998C-E9164C22A2F9}|SnzDiscordBot\\SnzDiscordBot.csproj|solutionrelative:snzdiscordbot\\modules\\settingsmodule.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 2,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "CancelModel.cs",
+              "DocumentMoniker": "C:\\Users\\\u0410\u043D\u0442\u043E\u043D\\RiderProjects\\SnzDiscordBot\\SnzDiscordBot\\Models\\InteractionModels\\CancelModel.cs",
+              "RelativeDocumentMoniker": "SnzDiscordBot\\Models\\InteractionModels\\CancelModel.cs",
+              "ToolTip": "C:\\Users\\\u0410\u043D\u0442\u043E\u043D\\RiderProjects\\SnzDiscordBot\\SnzDiscordBot\\Models\\InteractionModels\\CancelModel.cs",
+              "RelativeToolTip": "SnzDiscordBot\\Models\\InteractionModels\\CancelModel.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAqwBEAAAABAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-07T08:30:08.883Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "ApplicationModel.cs",
+              "DocumentMoniker": "C:\\Users\\\u0410\u043D\u0442\u043E\u043D\\RiderProjects\\SnzDiscordBot\\SnzDiscordBot\\Models\\InteractionModels\\ApplicationModel.cs",
+              "RelativeDocumentMoniker": "SnzDiscordBot\\Models\\InteractionModels\\ApplicationModel.cs",
+              "ToolTip": "C:\\Users\\\u0410\u043D\u0442\u043E\u043D\\RiderProjects\\SnzDiscordBot\\SnzDiscordBot\\Models\\InteractionModels\\ApplicationModel.cs",
+              "RelativeToolTip": "SnzDiscordBot\\Models\\InteractionModels\\ApplicationModel.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABcAAAABAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-04T11:42:56.891Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "ApplicationModule.cs",
+              "DocumentMoniker": "C:\\Users\\\u0410\u043D\u0442\u043E\u043D\\RiderProjects\\SnzDiscordBot\\SnzDiscordBot\\Modules\\ApplicationModule.cs",
+              "RelativeDocumentMoniker": "SnzDiscordBot\\Modules\\ApplicationModule.cs",
+              "ToolTip": "C:\\Users\\\u0410\u043D\u0442\u043E\u043D\\RiderProjects\\SnzDiscordBot\\SnzDiscordBot\\Modules\\ApplicationModule.cs",
+              "RelativeToolTip": "SnzDiscordBot\\Modules\\ApplicationModule.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAIMAAABAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-04T11:35:29.055Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "AppSettings.json",
+              "DocumentMoniker": "C:\\Users\\\u0410\u043D\u0442\u043E\u043D\\RiderProjects\\SnzDiscordBot\\SnzDiscordBot\\AppSettings.json",
+              "RelativeDocumentMoniker": "SnzDiscordBot\\AppSettings.json",
+              "ToolTip": "C:\\Users\\\u0410\u043D\u0442\u043E\u043D\\RiderProjects\\SnzDiscordBot\\SnzDiscordBot\\AppSettings.json",
+              "RelativeToolTip": "SnzDiscordBot\\AppSettings.json",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAYAAAAFAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2024-09-04T13:55:53.264Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "SettingsModule.cs",
+              "DocumentMoniker": "C:\\Users\\\u0410\u043D\u0442\u043E\u043D\\RiderProjects\\SnzDiscordBot\\SnzDiscordBot\\Modules\\SettingsModule.cs",
+              "RelativeDocumentMoniker": "SnzDiscordBot\\Modules\\SettingsModule.cs",
+              "ToolTip": "C:\\Users\\\u0410\u043D\u0442\u043E\u043D\\RiderProjects\\SnzDiscordBot\\SnzDiscordBot\\Modules\\SettingsModule.cs",
+              "RelativeToolTip": "SnzDiscordBot\\Modules\\SettingsModule.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAsAAAAwAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-04T11:37:20.396Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "CommandHandler.cs",
+              "DocumentMoniker": "C:\\Users\\\u0410\u043D\u0442\u043E\u043D\\RiderProjects\\SnzDiscordBot\\SnzDiscordBot\\CommandHandler.cs",
+              "RelativeDocumentMoniker": "SnzDiscordBot\\CommandHandler.cs",
+              "ToolTip": "C:\\Users\\\u0410\u043D\u0442\u043E\u043D\\RiderProjects\\SnzDiscordBot\\SnzDiscordBot\\CommandHandler.cs",
+              "RelativeToolTip": "SnzDiscordBot\\CommandHandler.cs",
+              "ViewState": "AQIAACEAAAAAAAAAAAAAwCsAAAAEAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-04T11:37:16.123Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\\u0410\u043D\u0442\u043E\u043D\\RiderProjects\\SnzDiscordBot\\SnzDiscordBot\\Program.cs",
+              "RelativeDocumentMoniker": "SnzDiscordBot\\Program.cs",
+              "ToolTip": "C:\\Users\\\u0410\u043D\u0442\u043E\u043D\\RiderProjects\\SnzDiscordBot\\SnzDiscordBot\\Program.cs",
+              "RelativeToolTip": "SnzDiscordBot\\Program.cs",
+              "ViewState": "AQIAABQAAAAAAAAAAAAqwDkAAAAFAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-04T11:35:23.811Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -27,8 +27,4 @@
       <Folder Include="Services\" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Content Include="bin\Properties\launchSettings.json" />
-    </ItemGroup>
-
 </Project>

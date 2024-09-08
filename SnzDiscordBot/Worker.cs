@@ -10,9 +10,9 @@ namespace SnzDiscordBot;
 
 public class Worker : BackgroundService
 {
-    private static ILogger<Worker> _logger;
-    private static DiscordSocketClient _client;
-    private InteractionService _commands;
+    private static ILogger<Worker> _logger = default!;
+    private static DiscordSocketClient _client = default!;
+    private InteractionService _commands = default!;
         
     public Worker(ILogger<Worker> logger)
     {
@@ -24,7 +24,7 @@ public class Worker : BackgroundService
         // Получение всех сервисов по DI
         var services = ConfigureServices();
                 
-        //Настройка Disocrd
+        //Настройка Discord
         _client = services.GetRequiredService<DiscordSocketClient>();
         _commands = services.GetRequiredService<InteractionService>();
         _client.Log += Log;
@@ -51,8 +51,10 @@ public class Worker : BackgroundService
             GatewayIntents = GatewayIntents.Guilds | GatewayIntents.GuildMembers
         };
 
+        var path = Directory.GetParent(AppContext.BaseDirectory)!.Parent!.Parent!.Parent!.FullName;
+        
         IConfiguration configuration = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetParent(AppContext.BaseDirectory).Parent.Parent.Parent.FullName)
+            .SetBasePath(path)
             .AddJsonFile("AppSettings.json", optional: false, reloadOnChange: true)
             .Build();
 

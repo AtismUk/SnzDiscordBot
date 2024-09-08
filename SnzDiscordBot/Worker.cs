@@ -68,7 +68,27 @@ public class Worker : BackgroundService
 
     static Task Log(LogMessage message)
     {
-        _logger.LogInformation($"[{message.Severity}] {message.Source}: {message.Message}");
+        switch (message.Severity)
+        {
+            case LogSeverity.Critical:
+                _logger.LogCritical($"{message.Source}: {message.Message}");
+                break;
+            case LogSeverity.Error:
+                _logger.LogError($"{message.Source}: {message.Message}");
+                break;
+            case LogSeverity.Warning:
+                _logger.LogWarning($"{message.Source}: {message.Message}");
+                break;
+            case LogSeverity.Info:
+                _logger.LogInformation($"{message.Source}: {message.Message}");
+                break;
+            case LogSeverity.Debug:
+                _logger.LogDebug($"{message.Source}: {message.Message}");
+                break;
+            default:
+                _logger.LogInformation($"{message.Source}: {message.Message}");
+                break;
+        }
         return Task.CompletedTask;
     }
 }

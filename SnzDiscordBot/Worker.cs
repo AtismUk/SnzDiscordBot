@@ -40,7 +40,7 @@ public class Worker : BackgroundService
         
         while (!stoppingToken.IsCancellationRequested)
         {
-            await Task.Delay(1000, stoppingToken);
+            await Task.Delay(10000, stoppingToken);
         }
     }
 
@@ -50,11 +50,8 @@ public class Worker : BackgroundService
         {
             GatewayIntents = GatewayIntents.Guilds | GatewayIntents.GuildMembers
         };
-
-        var path = Directory.GetParent(AppContext.BaseDirectory)!.Parent!.Parent!.Parent!.FullName;
         
         IConfiguration configuration = new ConfigurationBuilder()
-            .SetBasePath(path)
             .AddJsonFile("AppSettings.json", optional: false, reloadOnChange: true)
             .Build();
 

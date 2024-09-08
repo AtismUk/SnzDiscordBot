@@ -2,8 +2,16 @@
 using Microsoft.Extensions.Hosting;
 using SnzDiscordBot;
 
-var builder = Host.CreateApplicationBuilder(args);
-builder.Services.AddHostedService<Worker>();
+IHost host = Host.CreateDefaultBuilder(args)
+    .ConfigureServices(services =>
+    {
+        services.AddHostedService<Worker>();
+    })
+    // Configure as a Windows Service
+    .UseWindowsService(options =>
+    {
+        options.ServiceName = "Senezh Bot";
+    })
+    .Build();
 
-var host = builder.Build();
 host.Run();

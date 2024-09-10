@@ -35,11 +35,4 @@ class Program
 
         await discordBot!.RunAsync();
     }
-
-
-    static Task Log(LogMessage message)
-    {
-        Console.WriteLine(message.ToString());
-        return Task.CompletedTask;
-    }
 }

@@ -5,6 +5,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration.Json;
 using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json.Converters;
+using SnzDiscordBot.Models;
 using Microsoft.Extensions.Logging;
 
 namespace SnzDiscordBot;
@@ -16,7 +18,7 @@ class Program
     
     static async Task Main(string[] args)
     {
-        var host = Host.CreateDefaultBuilder()
+        await Host.CreateDefaultBuilder()
             .ConfigureServices(services =>
             {
                 services.AddSingleton<DiscordSocketClient>(new DiscordSocketClient(new()
@@ -25,19 +27,18 @@ class Program
                 }));
                 services.AddSingleton(x => new InteractionService(x.GetService<DiscordSocketClient>()));
                 services.AddSingleton<IConfiguration>(new ConfigurationBuilder()
-                    .AddJsonFile("AppSettings.json", optional: false, reloadOnChange: true)
-                    .Build());
+                        .AddJsonFile("AppSettings.json", optional: false, reloadOnChange: true)
+                        .Build());
                 services.AddSingleton<CommandHandler>();
 
-                services.AddSingleton<DiscordBotHandler>();
-
-                services.AddLogging(configure => configure.AddConsole());
+                services.AddHostedService<DiscordBotHandler>();
+            }).ConfigureLogging(x =>
+            {
+                x.AddConsole();
             })
-            .Build();
+            .Build()
+            .RunAsync();
 
-
-        var discordBot = host.Services.GetService<DiscordBotHandler>();
-
-        await discordBot!.RunAsync();
     }
+
 }

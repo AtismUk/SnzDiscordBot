@@ -8,65 +8,52 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Microsoft.Extensions.Logging;
+using SnzDiscordBot.Models;
+using Microsoft.Extensions.Hosting;
 
-namespace SnzDiscordBot;
-
-internal class DiscordBotHandler
+namespace SnzDiscordBot
 {
-    private readonly DiscordSocketClient _discordSocketClient;
-    private readonly InteractionService _interactionService;
-    private readonly IConfiguration _config;
-    private readonly CommandHandler _commandHandler;
-    private readonly ILogger<DiscordBotHandler> _logger;
-
-    public DiscordBotHandler(
-        DiscordSocketClient client, 
-        InteractionService intService, 
-        IConfiguration config, 
-        CommandHandler commandHandler,
-        ILogger<DiscordBotHandler> logger)
+    internal class DiscordBotHandler : IHostedService
     {
-        _discordSocketClient = client;
-        _interactionService = intService;
-        _config = config;
-        _commandHandler = commandHandler;
-        _logger = logger;
-    }
-
-    public async Task RunAsync()
-    {
-        var _client = _discordSocketClient;
-        var _commands = _interactionService;
-
-        // Используем метод логгирования вместо Console.WriteLine
-        _client.Log += Log;
-        _client.Ready += async () =>
+        private readonly DiscordSocketClient _discordSocketClient;
+        private readonly InteractionService _interactionService;
+        private readonly IConfiguration _config;
+        private readonly CommandHandler _commandHandler;
+        public DiscordBotHandler(DiscordSocketClient client, InteractionService intService, IConfiguration config, CommandHandler commandHandler)
         {
-            await _commands.RegisterCommandsGloballyAsync();
-        };
-        await _client.LoginAsync(TokenType.Bot, _config["Discord:Token"]);
-        await _client.StartAsync();
+            _discordSocketClient = client;
+            _interactionService = intService;
+            _config = config;
+            _commandHandler = commandHandler;
+        }
 
-        await _commandHandler.InitializeAsync();
-        await Task.Delay(-1);
-    }
-
-    private Task Log(LogMessage message)
-    {
-        var logLevel = message.Severity switch
+        static Task Log(LogMessage message)
         {
-            LogSeverity.Critical => LogLevel.Critical,
-            LogSeverity.Error => LogLevel.Error,
-            LogSeverity.Warning => LogLevel.Warning,
-            LogSeverity.Info => LogLevel.Information,
-            LogSeverity.Verbose => LogLevel.Debug,
-            LogSeverity.Debug => LogLevel.Trace,
-            _ => LogLevel.Information
-        };
+            Console.WriteLine(message.ToString());
+            return Task.CompletedTask;
+        }
 
-        _logger.Log(logLevel, message.Exception, message.Message);
+        public async Task StartAsync(CancellationToken cancellationToken)
+        {
+            var _client = _discordSocketClient;
+            var _commands = _interactionService;
 
-        return Task.CompletedTask;
+            _client.Log += Log;
+            _client.Ready += async () =>
+            {
+                await _commands.RegisterCommandsGloballyAsync();
+            };
+            await _client.LoginAsync(TokenType.Bot, _config["Discord:Token"]);
+            await _client.StartAsync();
+
+            await Task.Delay(3000);
+
+            await _commandHandler.InitializeAsync();
+        }
+
+        public async Task StopAsync(CancellationToken cancellationToken)
+        {
+            await _discordSocketClient.StopAsync();
+        }
     }
 }

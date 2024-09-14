@@ -20,6 +20,9 @@ public class AddRoleAll : InteractionModuleBase<SocketInteractionContext>
     {
         // Отправляем временный ответ, чтобы избежать таймаута
         await DeferAsync(ephemeral: true);
+        var resultMessage = new StringBuilder();
+        var errorBuilder = new StringBuilder();
+        var ignoredBuilder = new StringBuilder();
 
         var botUser = Context.Guild.GetUser(Context.Client.CurrentUser.Id);
         
@@ -30,13 +33,24 @@ public class AddRoleAll : InteractionModuleBase<SocketInteractionContext>
                                        .Select(id => id.Value)
                                        .ToHashSet();
 
+        foreach (var roleId in ignoreRoleIds)
+        {
+            var role = Context.Guild.GetRole(roleId);
+            ignoredBuilder.AppendLine(role.Name);
+        }
+        
+        
         int addedCount = 0;
-        var errorBuilder = new StringBuilder();
         
         await foreach (var users in Context.Guild.GetUsersAsync())
         {
             foreach (var user in users)
             {
+                if (user.RoleIds.Contains(add_role.Id))
+                {
+                    continue;
+                }
+                
                 // Проверяем, есть ли у пользователя любая из ролей, которые нужно игнорировать
                 if (user.RoleIds.Any(roleId => ignoreRoleIds.Contains(roleId)))
                 {
@@ -57,13 +71,19 @@ public class AddRoleAll : InteractionModuleBase<SocketInteractionContext>
         }
 
         // Формируем окончательное сообщение
-        var resultMessage = new StringBuilder();
+        
         resultMessage.AppendLine($"Роль {add_role.Name} была добавлена {addedCount} пользователям.");
 
         if (errorBuilder.Length > 0)
         {
             resultMessage.AppendLine("Ошибки:");
             resultMessage.Append(errorBuilder.ToString());
+        }
+        
+        if (ignoredBuilder.Length > 0)
+        {
+            resultMessage.AppendLine("Роли проигнорированы:");
+            resultMessage.Append(ignoredBuilder.ToString());
         }
 
         // Отправляем окончательный ответ после завершения выполнения команды

@@ -8,10 +8,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using SnzDiscordBot.Models;
+using Microsoft.Extensions.Hosting;
 
 namespace SnzDiscordBot
 {
-    internal class DiscordBotHandler
+    internal class DiscordBotHandler : IHostedService
     {
         private readonly DiscordSocketClient _discordSocketClient;
         private readonly InteractionService _interactionService;
@@ -25,10 +27,14 @@ namespace SnzDiscordBot
             _commandHandler = commandHandler;
         }
 
-        public async Task RunAsync()
+        static Task Log(LogMessage message)
         {
+            Console.WriteLine(message.ToString());
+            return Task.CompletedTask;
+        }
 
-            //Настройка Disocrd
+        public async Task StartAsync(CancellationToken cancellationToken)
+        {
             var _client = _discordSocketClient;
             var _commands = _interactionService;
 
@@ -40,15 +46,14 @@ namespace SnzDiscordBot
             await _client.LoginAsync(TokenType.Bot, _config["Discord:Token"]);
             await _client.StartAsync();
 
-            await _commandHandler.InitializeAsync();
-            await Task.Delay(-1);
+            await Task.Delay(3000);
 
+            await _commandHandler.InitializeAsync();
         }
 
-        static Task Log(LogMessage message)
+        public async Task StopAsync(CancellationToken cancellationToken)
         {
-            Console.WriteLine(message.ToString());
-            return Task.CompletedTask;
+            await _discordSocketClient.StopAsync();
         }
     }
 }

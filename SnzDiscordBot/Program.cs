@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration.Json;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace SnzDiscordBot;
 
@@ -24,12 +25,16 @@ class Program
                 }));
                 services.AddSingleton(x => new InteractionService(x.GetService<DiscordSocketClient>()));
                 services.AddSingleton<IConfiguration>(new ConfigurationBuilder()
-                        .AddJsonFile("AppSettings.json", optional: false, reloadOnChange: true)
-                        .Build());
+                    .AddJsonFile("AppSettings.json", optional: false, reloadOnChange: true)
+                    .Build());
                 services.AddSingleton<CommandHandler>();
 
                 services.AddSingleton<DiscordBotHandler>();
-            }).Build();
+
+                services.AddLogging(configure => configure.AddConsole());
+            })
+            .Build();
+
 
         var discordBot = host.Services.GetService<DiscordBotHandler>();
 

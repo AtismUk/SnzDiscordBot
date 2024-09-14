@@ -8,47 +8,65 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Microsoft.Extensions.Logging;
 
-namespace SnzDiscordBot
+namespace SnzDiscordBot;
+
+internal class DiscordBotHandler
 {
-    internal class DiscordBotHandler
+    private readonly DiscordSocketClient _discordSocketClient;
+    private readonly InteractionService _interactionService;
+    private readonly IConfiguration _config;
+    private readonly CommandHandler _commandHandler;
+    private readonly ILogger<DiscordBotHandler> _logger;
+
+    public DiscordBotHandler(
+        DiscordSocketClient client, 
+        InteractionService intService, 
+        IConfiguration config, 
+        CommandHandler commandHandler,
+        ILogger<DiscordBotHandler> logger)
     {
-        private readonly DiscordSocketClient _discordSocketClient;
-        private readonly InteractionService _interactionService;
-        private readonly IConfiguration _config;
-        private readonly CommandHandler _commandHandler;
-        public DiscordBotHandler(DiscordSocketClient client, InteractionService intService, IConfiguration config, CommandHandler commandHandler)
+        _discordSocketClient = client;
+        _interactionService = intService;
+        _config = config;
+        _commandHandler = commandHandler;
+        _logger = logger;
+    }
+
+    public async Task RunAsync()
+    {
+        var _client = _discordSocketClient;
+        var _commands = _interactionService;
+
+        // Используем метод логгирования вместо Console.WriteLine
+        _client.Log += Log;
+        _client.Ready += async () =>
         {
-            _discordSocketClient = client;
-            _interactionService = intService;
-            _config = config;
-            _commandHandler = commandHandler;
-        }
+            await _commands.RegisterCommandsGloballyAsync();
+        };
+        await _client.LoginAsync(TokenType.Bot, _config["Discord:Token"]);
+        await _client.StartAsync();
 
-        public async Task RunAsync()
+        await _commandHandler.InitializeAsync();
+        await Task.Delay(-1);
+    }
+
+    private Task Log(LogMessage message)
+    {
+        var logLevel = message.Severity switch
         {
+            LogSeverity.Critical => LogLevel.Critical,
+            LogSeverity.Error => LogLevel.Error,
+            LogSeverity.Warning => LogLevel.Warning,
+            LogSeverity.Info => LogLevel.Information,
+            LogSeverity.Verbose => LogLevel.Debug,
+            LogSeverity.Debug => LogLevel.Trace,
+            _ => LogLevel.Information
+        };
 
-            //Настройка Disocrd
-            var _client = _discordSocketClient;
-            var _commands = _interactionService;
+        _logger.Log(logLevel, message.Exception, message.Message);
 
-            _client.Log += Log;
-            _client.Ready += async () =>
-            {
-                await _commands.RegisterCommandsGloballyAsync();
-            };
-            await _client.LoginAsync(TokenType.Bot, _config["Discord:Token"]);
-            await _client.StartAsync();
-
-            await _commandHandler.InitializeAsync();
-            await Task.Delay(-1);
-
-        }
-
-        static Task Log(LogMessage message)
-        {
-            Console.WriteLine(message.ToString());
-            return Task.CompletedTask;
-        }
+        return Task.CompletedTask;
     }
 }

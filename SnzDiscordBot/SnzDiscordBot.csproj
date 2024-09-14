@@ -24,10 +24,6 @@
       <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.0-preview.6.24327.7" />
       <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0-preview.7.24405.7" />
       <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
-<<<<<<< HEAD
-      <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="8.0.0" />
-=======
->>>>>>> main
     </ItemGroup>
 
 	<ItemGroup>
@@ -45,13 +41,13 @@
         <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       </None>
       <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
-
+    </ItemGroup>
+    
 	<ItemGroup>
 		<None Update="appsettings.json">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
 		</None>
 	</ItemGroup>
-    </ItemGroup>
 
 </Project>

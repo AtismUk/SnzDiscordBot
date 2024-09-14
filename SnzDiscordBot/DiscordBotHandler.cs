@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using SnzDiscordBot.Models;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace SnzDiscordBot
 {
@@ -19,34 +20,47 @@ namespace SnzDiscordBot
         private readonly InteractionService _interactionService;
         private readonly IConfiguration _config;
         private readonly CommandHandler _commandHandler;
-        public DiscordBotHandler(DiscordSocketClient client, InteractionService intService, IConfiguration config, CommandHandler commandHandler)
+        private readonly ILogger<DiscordBotHandler> _logger;
+
+        public DiscordBotHandler(DiscordSocketClient client, InteractionService intService, IConfiguration config, CommandHandler commandHandler, ILogger<DiscordBotHandler> logger)
         {
             _discordSocketClient = client;
             _interactionService = intService;
             _config = config;
             _commandHandler = commandHandler;
+            _logger = logger;
         }
 
-        static Task Log(LogMessage message)
+        private Task Log(LogMessage message)
         {
-            Console.WriteLine(message.ToString());
+            var logLevel = message.Severity switch
+            {
+                LogSeverity.Critical => LogLevel.Critical,
+                LogSeverity.Error => LogLevel.Error,
+                LogSeverity.Warning => LogLevel.Warning,
+                LogSeverity.Info => LogLevel.Information,
+                LogSeverity.Verbose => LogLevel.Debug,
+                LogSeverity.Debug => LogLevel.Trace,
+                _ => LogLevel.Information
+            };
+            
+            _logger.Log(logLevel, message.Exception, $"{message.Source}: {message.Message}");
+            
             return Task.CompletedTask;
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-            var _client = _discordSocketClient;
-            var _commands = _interactionService;
+            var client = _discordSocketClient;
+            var commands = _interactionService;
 
-            _client.Log += Log;
-            _client.Ready += async () =>
+            client.Log += Log;
+            client.Ready += async () =>
             {
-                await _commands.RegisterCommandsGloballyAsync();
+                await commands.RegisterCommandsGloballyAsync();
             };
-            await _client.LoginAsync(TokenType.Bot, _config["Discord:Token"]);
-            await _client.StartAsync();
-
-            await Task.Delay(3000);
+            await client.LoginAsync(TokenType.Bot, _config["Discord:Token"]);
+            await client.StartAsync();
 
             await _commandHandler.InitializeAsync();
         }
@@ -57,3 +71,4 @@ namespace SnzDiscordBot
         }
     }
 }
+

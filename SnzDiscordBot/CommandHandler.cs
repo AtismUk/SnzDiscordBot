@@ -31,8 +31,6 @@ public class CommandHandler
         _commands.ContextCommandExecuted += ContextCommandExecuted;
         _commands.ComponentCommandExecuted += ComponentCommandExecuted;
         _commands.ModalCommandExecuted += ModalCommandExecuted;
-        
-    
     }
 
     private async Task ComponentCommandExecuted(ComponentCommandInfo componentCommandInfo, IInteractionContext interactionContext, IResult result)

@@ -108,9 +108,9 @@ public class ApplicationModule : InteractionModuleBase<SocketInteractionContext>
             await RespondAsync("Пользователь не найден на сервере", ephemeral: true);
         }
 
-        await user.RemoveRoleAsync(ulong.Parse(_config["Settings:New_Role_Id"]));
+        await user.RemoveRoleAsync(ulong.Parse(_config["Settings:Remove_Application_Role_Id"]!));
 
-        await user.AddRoleAsync(ulong.Parse(_config["Settings:Member_Role_Id"]));
+        await user.AddRoleAsync(ulong.Parse(_config["Settings:Add_Application_Role_Id"]!));
 
         await user.ModifyAsync(x => x.Nickname = "[SNZ] " + embedProper.Fields[0].Value);
 
@@ -185,7 +185,7 @@ public class ApplicationModule : InteractionModuleBase<SocketInteractionContext>
 
         var embedProper = message.Embeds.First();
 
-        ulong userId = ulong.Parse(embedProper.Footer.Value.Text);
+        ulong userId = ulong.Parse(embedProper.Footer!.Value.Text);
 
         var user = Context.Guild.Users.FirstOrDefault(x => x.Id == userId);
 
@@ -240,11 +240,5 @@ public class ApplicationModule : InteractionModuleBase<SocketInteractionContext>
 
         await RespondAsync("Заявка отклонена", ephemeral: true);
         #endregion
-    }
-
-    [SlashCommand("snz", "тест команд")]
-    public async Task Test()
-    {
-        await RespondAsync("Тест");
     }
 }

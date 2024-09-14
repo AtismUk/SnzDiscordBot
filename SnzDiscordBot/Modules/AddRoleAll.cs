@@ -18,25 +18,25 @@ public class AddRoleAll : InteractionModuleBase<SocketInteractionContext>
     [RequireUserPermission(GuildPermission.ManageRoles)]
     public async Task AddRoleAllCommand(IRole add_role, string? ignore_roles = "")
     {
-        // Отправляем временный ответ, чтобы избежать таймаута
-        await DeferAsync(ephemeral: true);
+        await DeferAsync();
+        
         var resultMessage = new StringBuilder();
         var errorBuilder = new StringBuilder();
-        var ignoredBuilder = new StringBuilder();
-
-        var botUser = Context.Guild.GetUser(Context.Client.CurrentUser.Id);
         
-        // Разбиваем строку на отдельные идентификаторы ролей
-        var ignoreRoleIds = ignore_roles.Split(',', StringSplitOptions.RemoveEmptyEntries)
-                                       .Select(id => ulong.TryParse(id, out var roleId) ? roleId : (ulong?)null)
-                                       .Where(id => id.HasValue)
-                                       .Select(id => id.Value)
-                                       .ToHashSet();
+        var ignoreRoles = ignore_roles?
+            .Split(',', StringSplitOptions.RemoveEmptyEntries)
+            .Select(id => ulong.TryParse(id, out var roleId) ? roleId : (ulong?)null)
+            .Where(id => id.HasValue)
+            .Select(id => Context.Guild.GetRole(id!.Value))
+            .ToHashSet();
 
-        foreach (var roleId in ignoreRoleIds)
+        if (ignoreRoles is { Count: > 0 })
         {
-            var role = Context.Guild.GetRole(roleId);
-            ignoredBuilder.AppendLine(role.Name);
+            resultMessage.AppendLine("Роли проигнорированы:");
+            foreach (var role in ignoreRoles)
+            {
+                resultMessage.AppendLine(role.Mention);
+            }
         }
         
         
@@ -47,30 +47,15 @@ public class AddRoleAll : InteractionModuleBase<SocketInteractionContext>
             foreach (var user in users)
             {
                 if (user.RoleIds.Contains(add_role.Id))
-                {
                     continue;
-                }
                 
-                // Проверяем, есть ли у пользователя любая из ролей, которые нужно игнорировать
-                if (user.RoleIds.Any(roleId => ignoreRoleIds.Contains(roleId)))
-                {
+                if (ignoreRoles != null && user.RoleIds.Any(roleId => ignoreRoles.Any(role => role.Id == roleId)))
                     continue;
-                }
-
-                try
-                {
-                    await user.AddRoleAsync(add_role);
-                    addedCount++;
-                }
-                catch (Exception ex)
-                {
-                    // Собираем ошибки в StringBuilder
-                    errorBuilder.AppendLine($"Не удалось добавить роль пользователю {user.Username}: {ex.Message}");
-                }
+                
+                await user.AddRoleAsync(add_role);
+                addedCount++;
             }
         }
-
-        // Формируем окончательное сообщение
         
         resultMessage.AppendLine($"Роль {add_role.Name} была добавлена {addedCount} пользователям.");
 
@@ -79,14 +64,7 @@ public class AddRoleAll : InteractionModuleBase<SocketInteractionContext>
             resultMessage.AppendLine("Ошибки:");
             resultMessage.Append(errorBuilder.ToString());
         }
-        
-        if (ignoredBuilder.Length > 0)
-        {
-            resultMessage.AppendLine("Роли проигнорированы:");
-            resultMessage.Append(ignoredBuilder.ToString());
-        }
 
-        // Отправляем окончательный ответ после завершения выполнения команды
         await FollowupAsync(resultMessage.ToString());
     }
 }

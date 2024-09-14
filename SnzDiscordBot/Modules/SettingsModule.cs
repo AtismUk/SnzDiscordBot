@@ -14,19 +14,19 @@ public class SettingsModule : InteractionModuleBase<SocketInteractionContext>
         _config = config;
     }
 
-    [SlashCommand("config", "настройка бота")]
+    [SlashCommand("config", "Настройка бота")]
     [RequireUserPermission(GuildPermission.BanMembers)]
-    public async Task ConfigCommand(IChannel application_channel, IRole new_role, IRole role_member)
+    public async Task ConfigCommand(IChannel application_channel, IRole remove_role, IRole add_role)
     {
         if (Context.User is SocketGuildUser userGuild)
         {
             if (userGuild.Roles.Any(x => x.Permissions.BanMembers))
             {
                 _config["Settings:Application_Channel_Id"] = application_channel.Id.ToString();
-                _config["Settings:New_Role_Id"] = new_role.Id.ToString();
-                _config["Settings:Member_Role_Id"] = role_member.Id.ToString();
+                _config["Settings:Remove_Application_Role_Id"] = remove_role.Id.ToString();
+                _config["Settings:Add_Application_Role_Id"] = add_role.Id.ToString();
 
-                await RespondAsync("Данные успешно сохраннены", ephemeral: true);
+                await RespondAsync("Данные успешно сохранены!");
             }
         }
     }

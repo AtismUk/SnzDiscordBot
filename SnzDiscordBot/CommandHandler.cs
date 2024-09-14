@@ -2,6 +2,7 @@ using System.Reflection;
 using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
+using Microsoft.Extensions.Logging;
 
 namespace SnzDiscordBot;
 
@@ -10,12 +11,14 @@ public class CommandHandler
     private readonly DiscordSocketClient _client;
     private readonly InteractionService _commands;
     private readonly IServiceProvider _service;
+    private readonly ILogger _logger;
 
-    public CommandHandler(DiscordSocketClient client, InteractionService interactionService, IServiceProvider service)
+    public CommandHandler(DiscordSocketClient client, InteractionService interactionService, IServiceProvider service, ILogger<CommandHandler> logger)
     {
         _client = client;
         _commands = interactionService;
         _service = service;
+        _logger = logger;
     }
 
     public async Task InitializeAsync()
@@ -28,8 +31,6 @@ public class CommandHandler
         _commands.ContextCommandExecuted += ContextCommandExecuted;
         _commands.ComponentCommandExecuted += ComponentCommandExecuted;
         _commands.ModalCommandExecuted += ModalCommandExecuted;
-        
-    
     }
 
     private async Task ComponentCommandExecuted(ComponentCommandInfo componentCommandInfo, IInteractionContext interactionContext, IResult result)
@@ -73,7 +74,7 @@ public class CommandHandler
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex);
+            _logger.LogError(ex, ex.Message);
             if (socketInteraction.Type == InteractionType.ApplicationCommand)
             {
                 await socketInteraction.GetOriginalResponseAsync().ContinueWith(async (msg) => await msg.Result.DeleteAsync());

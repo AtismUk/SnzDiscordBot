@@ -1,4 +1,4 @@
-﻿using Discord;
+using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
@@ -13,9 +13,6 @@ namespace SnzDiscordBot;
 
 class Program
 {
-    private static DiscordSocketClient _client;
-    private InteractionService _commands;
-    
     static async Task Main(string[] args)
     {
         await Host.CreateDefaultBuilder()
@@ -38,7 +35,5 @@ class Program
             })
             .Build()
             .RunAsync();
-
     }
-
 }

@@ -26,7 +26,7 @@ public class SettingsModule : InteractionModuleBase<SocketInteractionContext>
                 _config["Settings:Remove_Application_Role_Id"] = remove_role.Id.ToString();
                 _config["Settings:Add_Application_Role_Id"] = add_role.Id.ToString();
 
-                await RespondAsync("Данные успешно сохранены!");
+                await RespondAsync("Данные успешно сохранены!", ephemeral: true);
             }
         }
     }

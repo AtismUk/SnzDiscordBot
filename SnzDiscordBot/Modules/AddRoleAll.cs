@@ -7,21 +7,20 @@ namespace SnzDiscordBot.Modules;
 
 public class AddRoleAll : InteractionModuleBase<SocketInteractionContext>
 {
-    private readonly IConfiguration _config;
-    
-    public AddRoleAll(IConfiguration config)
-    {
-        _config = config;
-    }
+    public AddRoleAll() { }
     
     [SlashCommand("addroleall", "Выдать роль всем")]
     [RequireUserPermission(GuildPermission.ManageRoles)]
     public async Task AddRoleAllCommand(IRole add_role, string? ignore_roles = "")
     {
+        // Отправляем ответ сразу, чтобы не улететь в таймаут.
         await DeferAsync();
         
+        // Определяем строки.
         var resultMessage = new StringBuilder();
         var errorBuilder = new StringBuilder();
+
+        #region Обрабатываем игнорируемые роли.
         
         var ignoreRoles = ignore_roles?
             .Split(',', StringSplitOptions.RemoveEmptyEntries)
@@ -39,7 +38,10 @@ public class AddRoleAll : InteractionModuleBase<SocketInteractionContext>
             }
         }
         
-        
+        #endregion
+
+        #region Выдаем пользователям роль.
+
         int addedCount = 0;
         
         await foreach (var users in Context.Guild.GetUsersAsync())
@@ -59,12 +61,16 @@ public class AddRoleAll : InteractionModuleBase<SocketInteractionContext>
         
         resultMessage.AppendLine($"Роль {add_role.Name} была добавлена {addedCount} пользователям.");
 
+        #endregion
+
+        // Добавляем запись об ошибках.
         if (errorBuilder.Length > 0)
         {
             resultMessage.AppendLine("Ошибки:");
             resultMessage.Append(errorBuilder.ToString());
         }
 
+        // Редактируем ответ на отработанный.
         await FollowupAsync(resultMessage.ToString());
     }
 }

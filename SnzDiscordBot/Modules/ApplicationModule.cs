@@ -85,7 +85,7 @@ public class ApplicationModule : InteractionModuleBase<SocketInteractionContext>
 
 
     [ComponentInteraction("accept_button")]
-    [RequireUserPermission(GuildPermission.BanMembers)]
+    [RequireUserPermission(GuildPermission.ManageRoles)]
     public async Task AcceptButtonHanler()
     {
 
@@ -167,7 +167,7 @@ public class ApplicationModule : InteractionModuleBase<SocketInteractionContext>
 
 
     [ComponentInteraction("cancel_button")]
-    [RequireUserPermission(GuildPermission.BanMembers)]
+    [RequireUserPermission(GuildPermission.ManageRoles)]
     public async Task CancelButtonHanler()
     {
         await RespondWithModalAsync<CancelModel>("cancel_form");

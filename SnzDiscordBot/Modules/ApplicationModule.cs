@@ -18,7 +18,7 @@ public class ApplicationModule : InteractionModuleBase<SocketInteractionContext>
     [SlashCommand("application", "Отправить заявку на вступление")]
     public async Task ApplicationCommand()
     {
-        ulong channelId = ulong.Parse(_config["Settings:Application_channel_Id"]);
+        var channelId = ulong.Parse(_config["Settings:Application_channel_Id"] ?? string.Empty);
 
         if (Context.Guild.Channels.FirstOrDefault(x => x.Id == channelId) != null)
         {
@@ -29,30 +29,26 @@ public class ApplicationModule : InteractionModuleBase<SocketInteractionContext>
     [ModalInteraction("application_form")]
     public async Task HandlerApplicationForm(ApplicationModel form)
     {
-        byte point = 0;
-
-        if (!byte.TryParse(form.Points, out point) || point < 1 || point > 10)
+        if (!byte.TryParse(form.Points, out var point) || point < 1 || point > 10)
         {
             await RespondAsync("Ваша субъективная оценка игры должны быть в диапазоне от 1 по 10", ephemeral: true);
         }
 
-        long steamId = 0;
-
-        if (!long.TryParse(form.SteamId, out steamId) || form.SteamId.Length != 17)
+        if (!long.TryParse(form.SteamId, out var steamId) || form.SteamId.Length != 17)
         {
             await RespondAsync("Введите корректный SteamId", ephemeral: true);
         }
 
         var embed = new EmbedBuilder()
         {
-            Author = new()
+            Author = new EmbedAuthorBuilder
             {
                 Name = Context.User.GlobalName,
                 IconUrl = Context.User.GetAvatarUrl()
             },
             Color = Color.LightOrange,
             Title = "Заявка на вступление ⌛",
-            Footer = new()
+            Footer = new EmbedFooterBuilder
             {
                 Text = Context.User.Id.ToString()
             }
@@ -99,7 +95,7 @@ public class ApplicationModule : InteractionModuleBase<SocketInteractionContext>
 
         await Context.Guild.DownloadUsersAsync();
 
-        ulong userId = ulong.Parse(embedProper.Footer.Value.Text);
+        var userId = ulong.Parse(embedProper.Footer!.Value.Text);
 
         var user = Context.Guild.Users.FirstOrDefault(x => x.Id == userId);
 
@@ -108,7 +104,7 @@ public class ApplicationModule : InteractionModuleBase<SocketInteractionContext>
             await RespondAsync("Пользователь не найден на сервере", ephemeral: true);
         }
 
-        await user.RemoveRoleAsync(ulong.Parse(_config["Settings:Remove_Application_Role_Id"]!));
+        await user!.RemoveRoleAsync(ulong.Parse(_config["Settings:Remove_Application_Role_Id"]!));
 
         await user.AddRoleAsync(ulong.Parse(_config["Settings:Add_Application_Role_Id"]!));
 
@@ -185,7 +181,7 @@ public class ApplicationModule : InteractionModuleBase<SocketInteractionContext>
 
         var embedProper = message.Embeds.First();
 
-        ulong userId = ulong.Parse(embedProper.Footer!.Value.Text);
+        var userId = ulong.Parse(embedProper.Footer!.Value.Text);
 
         var user = Context.Guild.Users.FirstOrDefault(x => x.Id == userId);
 
@@ -200,7 +196,7 @@ public class ApplicationModule : InteractionModuleBase<SocketInteractionContext>
         {
             Author = new()
             {
-                Name = user.GlobalName,
+                Name = user!.GlobalName,
                 IconUrl = user.GetAvatarUrl(),
             },
             Color = Color.Red,

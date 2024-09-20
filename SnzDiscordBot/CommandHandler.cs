@@ -33,7 +33,7 @@ public class CommandHandler
         _commands.ModalCommandExecuted += ModalCommandExecuted;
     }
 
-    private async Task ComponentCommandExecuted(ComponentCommandInfo componentCommandInfo, IInteractionContext interactionContext, IResult result)
+    private static async Task ComponentCommandExecuted(ComponentCommandInfo componentCommandInfo, IInteractionContext interactionContext, IResult result)
     {
         if (!result.IsSuccess)
         {
@@ -41,7 +41,7 @@ public class CommandHandler
         }
     }
 
-    private async Task ModalCommandExecuted(ModalCommandInfo ModalCommandInfo, IInteractionContext interactionContext, IResult result)
+    private static async Task ModalCommandExecuted(ModalCommandInfo modalCommandInfo, IInteractionContext interactionContext, IResult result)
     {
         if (!result.IsSuccess)
         {
@@ -49,7 +49,7 @@ public class CommandHandler
         }
     }
 
-    private async Task ContextCommandExecuted(ContextCommandInfo contextCommandInfo, IInteractionContext interactionContext, IResult result)
+    private static async Task ContextCommandExecuted(ContextCommandInfo contextCommandInfo, IInteractionContext interactionContext, IResult result)
     {
         if (!result.IsSuccess)
         {
@@ -57,7 +57,7 @@ public class CommandHandler
         }
     }
 
-    private async Task SlashCommandExecuted(SlashCommandInfo slashCommand, IInteractionContext interactionContext, IResult result)
+    private static async Task SlashCommandExecuted(SlashCommandInfo slashCommand, IInteractionContext interactionContext, IResult result)
     {
         if (!result.IsSuccess)
         {

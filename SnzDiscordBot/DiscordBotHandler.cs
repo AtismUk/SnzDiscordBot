@@ -2,13 +2,6 @@
 using Discord.WebSocket;
 using Discord;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using SnzDiscordBot.Models;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
@@ -51,16 +44,15 @@ internal class DiscordBotHandler : IHostedService
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        var client = _discordSocketClient;
         var commands = _interactionService;
 
-        client.Log += Log;
-        client.Ready += async () =>
+        _discordSocketClient.Log += Log;
+        _discordSocketClient.Ready += async () =>
         {
             await commands.RegisterCommandsGloballyAsync();
         };
-        await client.LoginAsync(TokenType.Bot, _config["Discord:Token"]);
-        await client.StartAsync();
+        await _discordSocketClient.LoginAsync(TokenType.Bot, _config["Discord:Token"]);
+        await _discordSocketClient.StartAsync();
 
         await _commandHandler.InitializeAsync();
     }

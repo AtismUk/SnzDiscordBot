@@ -1,7 +1,5 @@
-using System.Text;
 using Discord;
 using Discord.Interactions;
-using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
 using SnzDiscordBot.Models.InteractionModels;
 
@@ -62,17 +60,19 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
     [ModalInteraction("news_form")]
     public async Task HandlerNewsForm(MentionModel form)
     {
-        Console.WriteLine("handled");
-        var channel = Context.Guild.GetChannel(ulong.Parse(_config["Settings:News_Channel_Id"])) as IMessageChannel;
-        Console.WriteLine(channel);
-        var embedBuilder = new EmbedBuilder();
+        var channel = Context.Guild.GetChannel(ulong.Parse(_config["Settings:News_Channel_Id"] ?? string.Empty)) as IMessageChannel;
 
-        embedBuilder.Title = form.Title;
-        embedBuilder.Description = form.Description;
-        embedBuilder.ImageUrl = form.ImageUrl;
-        embedBuilder.ThumbnailUrl = form.ThumbnailUrl;
-        Console.WriteLine(embedBuilder);
+        var embedBuilder = new EmbedBuilder
+        {
+            Title = form.Title,
+            Description = form.Description,
+            ImageUrl = form.ImageUrl,
+            ThumbnailUrl = form.ThumbnailUrl
+        };
+
         await channel!.SendMessageAsync($"{Context.Guild.EveryoneRole.Mention}",embed: embedBuilder.Build());
+        
+        await FollowupAsync("Успешно выполнено.", ephemeral: true);
     }
     
     #endregion
@@ -81,16 +81,19 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
     [ModalInteraction("schedule_form")]
     public async Task HandlerScheduleForm(MentionModel form)
     {
-        var channel = Context.Guild.GetChannel(ulong.Parse(_config["Settings:Schedule_Channel_Id"])) as IMessageChannel;
+        var channel = Context.Guild.GetChannel(ulong.Parse(_config["Settings:Schedule_Channel_Id"] ?? string.Empty)) as IMessageChannel;
         
-        var embedBuilder = new EmbedBuilder();
-        
-        embedBuilder.Title = form.Title;
-        embedBuilder.Description = form.Description;
-        embedBuilder.ImageUrl = form.ImageUrl;
-        embedBuilder.ThumbnailUrl = form.ThumbnailUrl;
-        
+        var embedBuilder = new EmbedBuilder
+        {
+            Title = form.Title,
+            Description = form.Description,
+            ImageUrl = form.ImageUrl,
+            ThumbnailUrl = form.ThumbnailUrl
+        };
+
         await channel!.SendMessageAsync($"{Context.Guild.EveryoneRole.Mention}", embed: embedBuilder.Build());
+        
+        await FollowupAsync("Успешно выполнено.", ephemeral: true);
     }
     #endregion
     
@@ -98,7 +101,7 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
     [ModalInteraction("event_form")]
     public async Task HandlerEventForm(MentionModel form)
     {
-        var channel = Context.Guild.GetChannel(ulong.Parse(_config["Settings:Event_Channel_Id"])) as IMessageChannel;
+        var channel = Context.Guild.GetChannel(ulong.Parse(_config["Settings:Event_Channel_Id"] ?? string.Empty)) as IMessageChannel;
         
         var embedBuilder = new EmbedBuilder()
         {
@@ -161,21 +164,21 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
         var fieldYes = new EmbedFieldBuilder()
         {
             Name = "Участвуют",
-            Value = string.Join("\n", yesList.Count > 0 ? yesList : new List<string> { "Пока никто не участвует" }),
+            Value = string.Join("\n", yesList.Count > 0 ? yesList : ["Пока никто не участвует"]),
             IsInline = true
         };
 
         var fieldNo = new EmbedFieldBuilder()
         {
             Name = "Не участвуют",
-            Value = string.Join("\n", noList.Count > 0 ? noList : new List<string> { "Никто не отказался" }),
+            Value = string.Join("\n", noList.Count > 0 ? noList : ["Никто не отказался"]),
             IsInline = true
         };
 
         var fieldMaybe = new EmbedFieldBuilder()
         {
             Name = "Не определились",
-            Value = string.Join("\n", maybeList.Count > 0 ? maybeList : new List<string> { "Никто не сомневается" }),
+            Value = string.Join("\n", maybeList.Count > 0 ? maybeList : ["Никто не сомневается"]),
             IsInline = true
         };
 
@@ -198,11 +201,13 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
         componentsBuilder.WithButton(_maybeButton);
 
         // Модифицируем сообщение
-        await message?.ModifyAsync(x =>
+        await message.ModifyAsync(x =>
         {
             x.Embed = embed.Build();
             x.Components = componentsBuilder.Build();
         })!;
+
+        await FollowupAsync("Успешно выполнено.", ephemeral: true);
 
         #endregion
     }
@@ -253,21 +258,21 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
         var fieldYes = new EmbedFieldBuilder()
         {
             Name = "Участвуют",
-            Value = string.Join("\n", yesList.Count > 0 ? yesList : new List<string> { "Пока никто не участвует" }),
+            Value = string.Join("\n", yesList.Count > 0 ? yesList : ["Пока никто не участвует"]),
             IsInline = true
         };
 
         var fieldNo = new EmbedFieldBuilder()
         {
             Name = "Не участвуют",
-            Value = string.Join("\n", noList.Count > 0 ? noList : new List<string> { "Никто не отказался" }),
+            Value = string.Join("\n", noList.Count > 0 ? noList : ["Никто не отказался"]),
             IsInline = true
         };
 
         var fieldMaybe = new EmbedFieldBuilder()
         {
             Name = "Не определились",
-            Value = string.Join("\n", maybeList.Count > 0 ? maybeList : new List<string> { "Никто не сомневается" }),
+            Value = string.Join("\n", maybeList.Count > 0 ? maybeList : ["Никто не сомневается"]),
             IsInline = true
         };
 
@@ -290,7 +295,7 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
         componentsBuilder.WithButton(_maybeButton);
 
         // Модифицируем сообщение
-        await message?.ModifyAsync(x =>
+        await message.ModifyAsync(x =>
         {
             x.Embed = embed.Build();
             x.Components = componentsBuilder.Build();
@@ -344,21 +349,21 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
         var fieldYes = new EmbedFieldBuilder()
         {
             Name = "Участвуют",
-            Value = string.Join("\n", yesList.Count > 0 ? yesList : new List<string> { "Пока никто не участвует" }),
+            Value = string.Join("\n", yesList.Count > 0 ? yesList : ["Пока никто не участвует"]),
             IsInline = true
         };
 
         var fieldNo = new EmbedFieldBuilder()
         {
             Name = "Не участвуют",
-            Value = string.Join("\n", noList.Count > 0 ? noList : new List<string> { "Никто не отказался" }),
+            Value = string.Join("\n", noList.Count > 0 ? noList : ["Никто не отказался"]),
             IsInline = true
         };
 
         var fieldMaybe = new EmbedFieldBuilder()
         {
             Name = "Не определились",
-            Value = string.Join("\n", maybeList.Count > 0 ? maybeList : new List<string> { "Никто не сомневается" }),
+            Value = string.Join("\n", maybeList.Count > 0 ? maybeList : ["Никто не сомневается"]),
             IsInline = true
         };
 
@@ -381,7 +386,7 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
         componentsBuilder.WithButton(_maybeButton);
 
         // Модифицируем сообщение
-        await message?.ModifyAsync(x =>
+        await message.ModifyAsync(x =>
         {
             x.Embed = embed.Build();
             x.Components = componentsBuilder.Build();
@@ -389,5 +394,56 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
 
         #endregion
     }
+    #endregion
+
+    #region EditMention
+
+    [SlashCommand("edit-mention", "Изменить уже созданное оповещение.")]
+    [RequireUserPermission(GuildPermission.MentionEveryone)]
+    public async Task EditMentionCommand(string channel_id, string message_id)
+    {
+        await RespondWithModalAsync<MentionModel>($"edit_form:{channel_id}:{message_id}");;
+    }
+    
+    [ModalInteraction("edit_form")]
+    public async Task HandlerEditForm(string customId, MentionModel form)
+    {
+        // Разделяем customId, чтобы получить channel_id и message_id
+        var parts = customId.Split(':');
+        if (parts.Length < 3)
+        {
+            await FollowupAsync("Произошла ошибка при получении данных.", ephemeral: true);
+            return;
+        }
+
+        var channel = (IMessageChannel?)Context.Guild.GetChannel(ulong.Parse(parts[1]));
+        if (channel == null)
+        {
+            await FollowupAsync("Не удалось найти канал.", ephemeral: true);
+            return;
+        }
+        
+        var message = channel.GetMessageAsync(ulong.Parse(parts[2])).Result;
+        if (message == null)
+        {
+            await FollowupAsync("Не удалось найти сообщение.", ephemeral: true);
+            return;
+        }
+
+        // Создаем новый Embed с измененными данными
+        var embed = new EmbedBuilder()
+        {
+            Title = form.Title,
+            Description = form.Description,
+            ImageUrl = form.ImageUrl,
+            ThumbnailUrl = form.ThumbnailUrl,
+        };
+
+        // Редактируем сообщение
+        await channel.ModifyMessageAsync(message.Id, properties => properties.Embed = embed.Build());
+
+        await FollowupAsync("Сообщение успешно отредактировано.", ephemeral: true);
+    }
+
     #endregion
 }

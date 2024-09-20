@@ -1,14 +1,11 @@
 using Discord;
 using Discord.Interactions;
-using Microsoft.Extensions.Configuration;
 using System.Text;
 
 namespace SnzDiscordBot.Modules;
 
 public class AddRoleAllModule : InteractionModuleBase<SocketInteractionContext>
 {
-    public AddRoleAllModule() { }
-    
     [SlashCommand("addroleall", "Выдать роль всем")]
     [RequireUserPermission(GuildPermission.ManageRoles)]
     public async Task AddRoleAllCommand(IRole add_role, string? ignore_roles = "")

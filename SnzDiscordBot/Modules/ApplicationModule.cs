@@ -86,7 +86,7 @@ public class ApplicationModule : InteractionModuleBase<SocketInteractionContext>
 
     [ComponentInteraction("accept_button")]
     [RequireUserPermission(GuildPermission.ManageRoles)]
-    public async Task AcceptButtonHanler()
+    public async Task AcceptButtonHandler()
     {
 
         #region Изменяем пользователя
@@ -168,7 +168,7 @@ public class ApplicationModule : InteractionModuleBase<SocketInteractionContext>
 
     [ComponentInteraction("cancel_button")]
     [RequireUserPermission(GuildPermission.ManageRoles)]
-    public async Task CancelButtonHanler()
+    public async Task CancelButtonHandler()
     {
         await RespondWithModalAsync<CancelModel>("cancel_form");
 

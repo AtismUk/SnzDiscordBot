@@ -5,9 +5,9 @@ using System.Text;
 
 namespace SnzDiscordBot.Modules;
 
-public class AddRoleAll : InteractionModuleBase<SocketInteractionContext>
+public class AddRoleAllModule : InteractionModuleBase<SocketInteractionContext>
 {
-    public AddRoleAll() { }
+    public AddRoleAllModule() { }
     
     [SlashCommand("addroleall", "Выдать роль всем")]
     [RequireUserPermission(GuildPermission.ManageRoles)]

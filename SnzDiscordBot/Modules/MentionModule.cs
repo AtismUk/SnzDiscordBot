@@ -36,7 +36,7 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
     }
 
     [SlashCommand("mention", "Запустить голосование. Type может быть только \"новость\", \"мероприятие\" или \"расписание\".")]
-    [RequireUserPermission(GuildPermission.MentionEveryone)]
+    // [RequireUserPermission(GuildPermission.MentionEveryone)]
     public async Task MentionCommand(string type)
     {
         switch (type.ToLower())
@@ -51,7 +51,7 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
                 await RespondWithModalAsync<MentionModel>("event_form");
                 break;
             default:
-                await RespondAsync("Тип может быть только \"**новость**\", \"**расписание**\" или \"**мероприятие**\".", ephemeral: true);
+                await FollowupAsync("Тип может быть только \"**новость**\", \"**расписание**\" или \"**мероприятие**\".", ephemeral: true);
                 break;
         }
     }
@@ -62,21 +62,17 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
     {
         var channel = (IMessageChannel?)Context.Guild.GetChannel(ulong.Parse(_config["Settings:News_Channel_Id"] ?? string.Empty));
         if (channel == null)
-        {
-            await FollowupAsync("Ошибка. Указанный в конфиге канал не найден.", ephemeral: true);
-        }
+            return;
 
-        var embedBuilder = new EmbedBuilder
+        var embedBuilder = new EmbedBuilder()
         {
-            Title = form.Title,
+            Title = form.UserTitle,
             Description = form.Description,
+            ThumbnailUrl = form.ThumbnailUrl,
             ImageUrl = form.ImageUrl,
-            ThumbnailUrl = form.ThumbnailUrl
         };
 
         await channel!.SendMessageAsync($"{Context.Guild.EveryoneRole.Mention}",embed: embedBuilder.Build());
-        
-        await FollowupAsync("Успешно выполнено.", ephemeral: true);
     }
     
     #endregion
@@ -87,21 +83,17 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
     {
         var channel = (IMessageChannel?)Context.Guild.GetChannel(ulong.Parse(_config["Settings:News_Channel_Id"] ?? string.Empty));
         if (channel == null)
-        {
-            await FollowupAsync("Ошибка. Указанный в конфиге канал не найден.", ephemeral: true);
-        }
+            return;
         
-        var embedBuilder = new EmbedBuilder
+        var embedBuilder = new EmbedBuilder()
         {
-            Title = form.Title,
+            Title = form.UserTitle,
             Description = form.Description,
+            ThumbnailUrl = form.ThumbnailUrl,
             ImageUrl = form.ImageUrl,
-            ThumbnailUrl = form.ThumbnailUrl
         };
 
         await channel!.SendMessageAsync($"{Context.Guild.EveryoneRole.Mention}", embed: embedBuilder.Build());
-        
-        await FollowupAsync("Успешно выполнено.", ephemeral: true);
     }
     #endregion
     
@@ -111,17 +103,16 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
     {
         var channel = (IMessageChannel?)Context.Guild.GetChannel(ulong.Parse(_config["Settings:News_Channel_Id"] ?? string.Empty));
         if (channel == null)
-        {
-            await FollowupAsync("Ошибка. Указанный в конфиге канал не найден.", ephemeral: true);
-        }
+            return;
         
         var embedBuilder = new EmbedBuilder()
         {
-            Title = form.Title,
+            Title = form.UserTitle,
             Description = form.Description,
-            ImageUrl = form.ImageUrl,
             ThumbnailUrl = form.ThumbnailUrl,
+            ImageUrl = form.ImageUrl,
         };
+        
         var componentsBuilder = new ComponentBuilder();
         
         componentsBuilder.WithButton(_yesButton);
@@ -218,8 +209,6 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
             x.Embed = embed.Build();
             x.Components = componentsBuilder.Build();
         })!;
-
-        await FollowupAsync("Успешно выполнено.", ephemeral: true);
 
         #endregion
     }
@@ -423,38 +412,27 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
         // Разделяем customId, чтобы получить channel_id и message_id
         var parts = customId.Split(':');
         if (parts.Length < 3)
-        {
-            await FollowupAsync("Произошла ошибка при получении данных.", ephemeral: true);
             return;
-        }
 
         var channel = (IMessageChannel?)Context.Guild.GetChannel(ulong.Parse(parts[1]));
         if (channel == null)
-        {
-            await FollowupAsync("Не удалось найти канал.", ephemeral: true);
             return;
-        }
         
         var message = channel.GetMessageAsync(ulong.Parse(parts[2])).Result;
         if (message == null)
-        {
-            await FollowupAsync("Не удалось найти сообщение.", ephemeral: true);
             return;
-        }
 
         // Создаем новый Embed с измененными данными
-        var embed = new EmbedBuilder()
+        var embedBuilder = new EmbedBuilder()
         {
-            Title = form.Title,
+            Title = form.UserTitle,
             Description = form.Description,
-            ImageUrl = form.ImageUrl,
             ThumbnailUrl = form.ThumbnailUrl,
+            ImageUrl = form.ImageUrl,
         };
 
         // Редактируем сообщение
-        await channel.ModifyMessageAsync(message.Id, properties => properties.Embed = embed.Build());
-
-        await FollowupAsync("Сообщение успешно отредактировано.", ephemeral: true);
+        await channel.ModifyMessageAsync(message.Id, properties => properties.Embed = embedBuilder.Build());
     }
 
     #endregion

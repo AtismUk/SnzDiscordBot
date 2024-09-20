@@ -23,8 +23,8 @@ public class InfoModule : InteractionModuleBase<SocketInteractionContext>
         resultBuilder.AppendLine($"Выдаваемая роль при рег.: <@&{_config["Settings:Add_Application_Role_Id"]}>");
         resultBuilder.AppendLine("## Настройки оповещений");
         resultBuilder.AppendLine($"Канал новостей: <#{_config["Settings:News_Channel_Id"]}>");
-        resultBuilder.AppendLine($"Канал мероприятий: <@&{_config["Settings:Event_Channel_Id"]}>");
-        resultBuilder.AppendLine($"Канал расписания: <@&{_config["Settings:Schedule_Channel_Id"]}>");
+        resultBuilder.AppendLine($"Канал мероприятий: <#{_config["Settings:Event_Channel_Id"]}>");
+        resultBuilder.AppendLine($"Канал расписания: <#{_config["Settings:Schedule_Channel_Id"]}>");
         
         await RespondAsync(resultBuilder.ToString(), ephemeral: true);
     }

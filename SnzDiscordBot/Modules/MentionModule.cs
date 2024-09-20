@@ -60,7 +60,11 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
     [ModalInteraction("news_form")]
     public async Task HandlerNewsForm(MentionModel form)
     {
-        var channel = Context.Guild.GetChannel(ulong.Parse(_config["Settings:News_Channel_Id"] ?? string.Empty)) as IMessageChannel;
+        var channel = (IMessageChannel?)Context.Guild.GetChannel(ulong.Parse(_config["Settings:News_Channel_Id"] ?? string.Empty));
+        if (channel == null)
+        {
+            await FollowupAsync("Ошибка. Указанный в конфиге канал не найден.", ephemeral: true);
+        }
 
         var embedBuilder = new EmbedBuilder
         {
@@ -81,7 +85,11 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
     [ModalInteraction("schedule_form")]
     public async Task HandlerScheduleForm(MentionModel form)
     {
-        var channel = Context.Guild.GetChannel(ulong.Parse(_config["Settings:Schedule_Channel_Id"] ?? string.Empty)) as IMessageChannel;
+        var channel = (IMessageChannel?)Context.Guild.GetChannel(ulong.Parse(_config["Settings:News_Channel_Id"] ?? string.Empty));
+        if (channel == null)
+        {
+            await FollowupAsync("Ошибка. Указанный в конфиге канал не найден.", ephemeral: true);
+        }
         
         var embedBuilder = new EmbedBuilder
         {
@@ -101,7 +109,11 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
     [ModalInteraction("event_form")]
     public async Task HandlerEventForm(MentionModel form)
     {
-        var channel = Context.Guild.GetChannel(ulong.Parse(_config["Settings:Event_Channel_Id"] ?? string.Empty)) as IMessageChannel;
+        var channel = (IMessageChannel?)Context.Guild.GetChannel(ulong.Parse(_config["Settings:News_Channel_Id"] ?? string.Empty));
+        if (channel == null)
+        {
+            await FollowupAsync("Ошибка. Указанный в конфиге канал не найден.", ephemeral: true);
+        }
         
         var embedBuilder = new EmbedBuilder()
         {
@@ -402,7 +414,7 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
     [RequireUserPermission(GuildPermission.MentionEveryone)]
     public async Task EditMentionCommand(string channel_id, string message_id)
     {
-        await RespondWithModalAsync<MentionModel>($"edit_form:{channel_id}:{message_id}");;
+        await RespondWithModalAsync<MentionModel>($"edit_form:{channel_id}:{message_id}");
     }
     
     [ModalInteraction("edit_form")]

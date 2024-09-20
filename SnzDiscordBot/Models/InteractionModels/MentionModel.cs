@@ -5,14 +5,14 @@ namespace SnzDiscordBot.Models.InteractionModels;
 public class MentionModel : IModal
 {
     [InputLabel("Заголовок")]
-    public string Title { get; set; }
-    
+    public string Title { get; set; } = default!;
+
     [ModalTextInput("Информация")]
-    public string Description { get; set; }
+    public string Description { get; set; } = default!;
     
     [InputLabel("Ссылка на превью")]
-    public string ImageUrl { get; set; }
+    public string ImageUrl { get; set; } = default!;
     
     [InputLabel("Ссылка на лого")]
-    public string ThumbnailUrl { get; set; }
+    public string ThumbnailUrl { get; set; } = default!;
 }

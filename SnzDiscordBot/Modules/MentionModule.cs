@@ -10,6 +10,8 @@ namespace SnzDiscordBot.Modules;
 public class MentionModule : InteractionModuleBase<SocketInteractionContext>
 {
     private readonly IConfiguration _config;
+
+    #region Buttons
     private readonly ButtonBuilder _yesButton = new()
     {
         CustomId = "yes_button",
@@ -28,6 +30,7 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
         Label = "\u2753 Не уверен",
         Style = ButtonStyle.Secondary,
     };
+    #endregion
 
     public MentionModule(IConfiguration config)
     {
@@ -42,19 +45,20 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
         {
             case "новость":
                 await RespondWithModalAsync<MentionModel>("news_form");
-                return;
+                break;
             case "расписание":
                 await RespondWithModalAsync<MentionModel>("schedule_form");
-                return;
+                break;
             case "мероприятие":
                 await RespondWithModalAsync<MentionModel>("event_form");
-                return;
+                break;
             default:
                 await RespondAsync("Тип может быть только \"**новость**\", \"**расписание**\" или \"**мероприятие**\".", ephemeral: true);
-                return;
+                break;
         }
     }
 
+    #region News
     [ModalInteraction("news_form")]
     public async Task HandlerNewsForm(MentionModel form)
     {
@@ -70,7 +74,10 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
         Console.WriteLine(embedBuilder);
         await channel!.SendMessageAsync($"{Context.Guild.EveryoneRole.Mention}",embed: embedBuilder.Build());
     }
+    
+    #endregion
 
+    #region Schedule
     [ModalInteraction("schedule_form")]
     public async Task HandlerScheduleForm(MentionModel form)
     {
@@ -85,7 +92,9 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
         
         await channel!.SendMessageAsync($"{Context.Guild.EveryoneRole.Mention}", embed: embedBuilder.Build());
     }
-
+    #endregion
+    
+    #region Event
     [ModalInteraction("event_form")]
     public async Task HandlerEventForm(MentionModel form)
     {
@@ -380,4 +389,5 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
 
         #endregion
     }
+    #endregion
 }

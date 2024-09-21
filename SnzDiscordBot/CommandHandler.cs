@@ -37,7 +37,8 @@ public class CommandHandler
     {
         if (!result.IsSuccess)
         {
-            await interactionContext.Interaction.RespondAsync(result.ErrorReason, ephemeral: true);
+            var exec = (ExecuteResult)result;
+            await interactionContext.Interaction.RespondAsync($"{exec.ErrorReason}\n{exec.Exception}", ephemeral: true);
         }
     }
 
@@ -45,7 +46,8 @@ public class CommandHandler
     {
         if (!result.IsSuccess)
         {
-            await interactionContext.Interaction.RespondAsync(result.ErrorReason, ephemeral: true);
+            var exec = (ExecuteResult)result;
+            await interactionContext.Interaction.RespondAsync($"{exec.ErrorReason}\n{exec.Exception}", ephemeral: true);
         }
     }
 
@@ -53,7 +55,8 @@ public class CommandHandler
     {
         if (!result.IsSuccess)
         {
-            await interactionContext.Interaction.RespondAsync(result.ErrorReason, ephemeral: true);
+            var exec = (ExecuteResult)result;
+            await interactionContext.Interaction.RespondAsync($"{exec.ErrorReason}\n{exec.Exception}", ephemeral: true);
         }
     }
 
@@ -61,7 +64,8 @@ public class CommandHandler
     {
         if (!result.IsSuccess)
         {
-            await interactionContext.Interaction.RespondAsync(result.ErrorReason, ephemeral: true);
+            var exec = (ExecuteResult)result;
+            await interactionContext.Interaction.RespondAsync($"{exec.ErrorReason}\n{exec.Exception}", ephemeral: true);
         }
     }
 
@@ -74,10 +78,11 @@ public class CommandHandler
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, ex.Message);
             if (socketInteraction.Type == InteractionType.ApplicationCommand)
             {
                 await socketInteraction.GetOriginalResponseAsync().ContinueWith(async (msg) => await msg.Result.DeleteAsync());
+                
+                await socketInteraction.FollowupAsync($"Произошла ошибка:\n```{ex}```", ephemeral: true);
             }
         }
     }

@@ -17,6 +17,7 @@ public class InfoModule : InteractionModuleBase<SocketInteractionContext>
     {
         var resultBuilder = new StringBuilder();
         
+        resultBuilder.AppendLine($"Канал аудита: <#{_config["Settings:Audit_Channel_Id"]}>");
         resultBuilder.AppendLine("## Настройки регистрации");
         resultBuilder.AppendLine($"Канал регистрации: <#{_config["Settings:Application_channel_Id"]}>");
         resultBuilder.AppendLine($"Удаляемая роль при рег.: <@&{_config["Settings:Remove_Application_Role_Id"]}>");

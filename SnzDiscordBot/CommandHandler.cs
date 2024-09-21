@@ -101,7 +101,7 @@ public class CommandHandler
 
     private async Task LogInChannel<T>(CommandInfo<T> commandInfo, IInteractionContext interactionContext, IResult result) where T : class, IParameterInfo
     {
-        var auditChannel = (IMessageChannel?)await interactionContext.Guild.GetChannelAsync(ulong.Parse(_config["Settings:Audit_Channel"]!));
+        var auditChannel = (IMessageChannel?)await interactionContext.Guild.GetChannelAsync(ulong.Parse(_config["Settings:Audit_Channel_Id"]!));
         if (auditChannel == null)
         {
             _logger.LogWarning($"{interactionContext.Guild.Name}: No audit channel configured!");

@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using Discord;
 using Discord.Interactions;
 using Microsoft.Extensions.Configuration;
@@ -8,7 +9,31 @@ namespace SnzDiscordBot.Modules;
 
 public class ApplicationModule : InteractionModuleBase<SocketInteractionContext>
 {
+    #region Buttons
 
+    private readonly ButtonBuilder _acceptButton = new() {
+        CustomId = "accept_button", 
+        Label = "Принять", 
+        Style = ButtonStyle.Success,
+    };
+    private readonly ButtonBuilder _cancelButton = new() {
+        CustomId = "cancel_button",
+        Label = "Отклонить",
+        Style = ButtonStyle.Secondary,
+    };
+    
+    private readonly ButtonBuilder _acceptButtonDisabled = new() {
+        CustomId = "accept_button", 
+        Label = "Принять", 
+        Style = ButtonStyle.Success,
+    };
+    private readonly ButtonBuilder _cancelButtonDisabled = new() {
+        CustomId = "cancel_button",
+        Label = "Отклонить",
+        Style = ButtonStyle.Secondary,
+    };
+
+    #endregion
     private readonly IConfiguration _config;
     public ApplicationModule(IConfiguration config)
     {
@@ -29,14 +54,18 @@ public class ApplicationModule : InteractionModuleBase<SocketInteractionContext>
     [ModalInteraction("application_form")]
     public async Task HandlerApplicationForm(ApplicationModel form)
     {
+        if (Regex.IsMatch(form.Nick, @"^[a-zA-Z0-9]+$")) {
+              await RespondAsync("Ваш позывной может содержать только латинские символы и цифры!", ephemeral: true);  
+        }
+        
         if (!byte.TryParse(form.Points, out var point) || point < 1 || point > 10)
         {
-            await RespondAsync("Ваша субъективная оценка игры должны быть в диапазоне от 1 по 10", ephemeral: true);
+            await RespondAsync("Ваша субъективная оценка игры должны быть в диапазоне от 1 по 10!", ephemeral: true);
         }
 
         if (!long.TryParse(form.SteamId, out var steamId) || form.SteamId.Length != 17)
         {
-            await RespondAsync("Введите корректный SteamId", ephemeral: true);
+            await RespondAsync("Введите корректный SteamID64!", ephemeral: true);
         }
 
         var embed = new EmbedBuilder()
@@ -54,26 +83,13 @@ public class ApplicationModule : InteractionModuleBase<SocketInteractionContext>
             }
         };
         embed.AddField("Позывной", form.Nick);
-        embed.AddField("Steam Id", "https://steamcommunity.com/profiles/" + steamId.ToString());
+        embed.AddField("Steam", "https://steamcommunity.com/profiles/" + steamId.ToString());
         embed.AddField("От куда узнал", form.Info);
         embed.AddField("Субъективная оценка игры", point.ToString() + "/10");
 
-        ButtonBuilder acceptButton = new()
-        {
-            CustomId = "accept_button",
-            Label = "Принять",
-            Style = ButtonStyle.Success,
-        };
-        ButtonBuilder cancelButton = new()
-        {
-            CustomId = "cancel_button",
-            Label = "Отклонить",
-            Style = ButtonStyle.Secondary,
-        };
-
         ComponentBuilder componentBuilder = new();
-        componentBuilder.WithButton(acceptButton);
-        componentBuilder.WithButton(cancelButton);
+        componentBuilder.WithButton(_acceptButton);
+        componentBuilder.WithButton(_cancelButton);
 
         await RespondAsync(embed: embed.Build(), components: componentBuilder.Build());
 
@@ -130,24 +146,10 @@ public class ApplicationModule : InteractionModuleBase<SocketInteractionContext>
         embed.AddField("От куда узнал", embedProper.Fields[2].Value);
         embed.AddField("Субъективная оценка игры", embedProper.Fields[3].Value);
 
-        ButtonBuilder acceptButton = new()
-        {
-            CustomId = "accept_button",
-            Label = "Принять",
-            Style = ButtonStyle.Success,
-            IsDisabled = true,
-        };
-        ButtonBuilder cancelButton = new()
-        {
-            CustomId = "cancel_button",
-            Label = "Отклонить",
-            Style = ButtonStyle.Secondary,
-            IsDisabled = true,
-        };
-
         ComponentBuilder componentBuilder = new();
-        componentBuilder.WithButton(acceptButton);
-        componentBuilder.WithButton(cancelButton);
+        
+        componentBuilder.WithButton(_acceptButtonDisabled);
+        componentBuilder.WithButton(_cancelButtonDisabled);
 
 
         await message.ModifyAsync(x =>
@@ -208,24 +210,9 @@ public class ApplicationModule : InteractionModuleBase<SocketInteractionContext>
         embed.AddField("Субъективная оценка игры", embedProper.Fields[3].Value);
         embed.AddField("Причина отклонения", form.Text);
 
-        ButtonBuilder acceptButton = new()
-        {
-            CustomId = "accept_button",
-            Label = "Принять",
-            Style = ButtonStyle.Secondary,
-            IsDisabled = true,
-        };
-        ButtonBuilder cancelButton = new()
-        {
-            CustomId = "cancel_button",
-            Label = "Отклонить",
-            Style = ButtonStyle.Danger,
-            IsDisabled = true,
-        };
-
         ComponentBuilder componentBuilder = new();
-        componentBuilder.WithButton(acceptButton);
-        componentBuilder.WithButton(cancelButton);
+        componentBuilder.WithButton(_acceptButtonDisabled);
+        componentBuilder.WithButton(_cancelButtonDisabled);
 
 
         await message.ModifyAsync(x =>

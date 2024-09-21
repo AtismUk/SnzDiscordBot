@@ -76,13 +76,13 @@ public class CommandHandler
             var socketInteractionContext = new SocketInteractionContext(_client, socketInteraction);
             await _commands.ExecuteCommandAsync(socketInteractionContext, _service);
         }
-        catch (Exception ex)
+        catch (Exception e)
         {
             if (socketInteraction.Type == InteractionType.ApplicationCommand)
             {
                 await socketInteraction.GetOriginalResponseAsync().ContinueWith(async (msg) => await msg.Result.DeleteAsync());
                 
-                await socketInteraction.FollowupAsync($"Произошла ошибка:\n```{ex}```", ephemeral: true);
+                await socketInteraction.RespondAsync(e.ToString(), ephemeral: true);
             }
         }
     }

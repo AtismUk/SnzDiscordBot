@@ -514,47 +514,60 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
 
     #region EditMention
 
-    [SlashCommand("edit-mention", "Изменить уже созданное оповещение.")]
-    [RequireUserPermission(GuildPermission.MentionEveryone)]
-    public async Task EditMentionCommand(string channel_id, string message_id)
+    // [SlashCommand("edit-mention", "Изменить уже созданное оповещение.")]
+    // [RequireUserPermission(GuildPermission.MentionEveryone)]
+    public async Task EditMentionCommand(string channelId, string messageId)
     {
-        await RespondWithModalAsync<MentionModel>($"edit_form:{channel_id}:{message_id}");
-    }
+        // Сохраняем ID канала и сообщения для дальнейшего использования в модальной форме
+        var customId = $"edit_form:{channelId}:{messageId}";
     
-    [ModalInteraction("edit_form")]
-    public async Task HandlerEditForm(string customId, MentionModel form)
+        await RespondWithModalAsync<MentionModel>(customId);
+    }
+
+    [ModalInteraction("edit_form:{channelId}:{messageId}")]
+    public async Task HandlerEditForm(string channelId, string messageId, MentionModel form)
     {
-        // Разделяем customId, чтобы получить channel_id и message_id
-        var parts = customId.Split(':');
-        if (parts.Length < 3)
-            return;
-
-        var channel = (IMessageChannel?)Context.Guild.GetChannel(ulong.Parse(parts[1]));
+        var channel = (IMessageChannel?)Context.Client.GetChannel(ulong.Parse(channelId));
         if (channel == null)
+        {
+            await RespondAsync("Канал не найден!", ephemeral: true);
             return;
-        
-        var message = channel.GetMessageAsync(ulong.Parse(parts[2])).Result;
-        if (message == null)
-            return;
+        }
 
-        // Создаем новый Embed с измененными данными
+        var message = (IUserMessage)await channel.GetMessageAsync(ulong.Parse(messageId));
+        if (message == null)
+        {
+            await RespondAsync("Сообщение не найдено!", ephemeral: true);
+            return;
+        }
+
+        var embedProper = message.Embeds.FirstOrDefault();
+        if (embedProper == null)
+        {
+            await RespondAsync("Embed не найден!", ephemeral: true);
+            return;
+        }
+
         var embedBuilder = new EmbedBuilder()
         {
             Title = form.UserTitle,
             Description = form.Description,
+            Fields = embedProper.Fields.Select(field => new EmbedFieldBuilder()
+                { Name = field.Name, Value = field.Value, IsInline = field.Inline, }).ToList(),
         };
         if (form.ThumbnailUrl.StartsWith("http"))
         {
             embedBuilder.WithThumbnailUrl(form.ThumbnailUrl);
         }
+
         if (form.ImageUrl.StartsWith("http"))
         {
             embedBuilder.WithImageUrl(form.ImageUrl);
         }
 
-        // Редактируем сообщение
-        await channel.ModifyMessageAsync(message.Id, properties => properties.Embed = embedBuilder.Build());
-        await RespondAsync("Выполнено!", ephemeral: true);
+        await message.ModifyAsync(msg => { msg.Embeds = new[] { embedBuilder.Build() }; });
+
+        await RespondAsync("Сообщение успешно обновлено!", ephemeral: true);
     }
 
     #endregion

@@ -13,7 +13,7 @@ jobs:
     - name: Restore
       run: dotnet restore
     - name: Build win-x64
-      run: dotnet build --no-restore -c Release -r win-x64
+      run: dotnet build --no-restore -c Release
     - name: Upload win-x64
       uses: actions/upload-artifact@v3.2.1-node20
       with:

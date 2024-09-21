@@ -54,7 +54,7 @@ public class ApplicationModule : InteractionModuleBase<SocketInteractionContext>
     [ModalInteraction("application_form")]
     public async Task HandlerApplicationForm(ApplicationModel form)
     {
-        if (Regex.IsMatch(form.Nick, @"^[a-zA-Z0-9]+$")) {
+        if (!Regex.IsMatch(form.Nick, @"^[a-zA-Z0-9]+$")) {
               await RespondAsync("Ваш позывной может содержать только латинские символы и цифры!", ephemeral: true);  
         }
         

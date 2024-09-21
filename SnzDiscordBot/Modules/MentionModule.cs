@@ -1,5 +1,6 @@
 using Discord;
 using Discord.Interactions;
+using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
 using SnzDiscordBot.Models.InteractionModels;
 
@@ -51,7 +52,7 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
                 await RespondWithModalAsync<MentionModel>("event_form");
                 break;
             default:
-                await FollowupAsync("Тип может быть только \"**новость**\", \"**расписание**\" или \"**мероприятие**\".", ephemeral: true);
+                await RespondAsync("Тип может быть только \"**новость**\", \"**расписание**\" или \"**мероприятие**\".", ephemeral: true);
                 break;
         }
     }
@@ -62,17 +63,27 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
     {
         var channel = (IMessageChannel?)Context.Guild.GetChannel(ulong.Parse(_config["Settings:News_Channel_Id"] ?? string.Empty));
         if (channel == null)
+        {
+            await RespondAsync("Канал не найден!", ephemeral: true);
             return;
+        }
 
         var embedBuilder = new EmbedBuilder()
         {
             Title = form.UserTitle,
             Description = form.Description,
-            ThumbnailUrl = form.ThumbnailUrl,
-            ImageUrl = form.ImageUrl,
         };
+        if (form.ThumbnailUrl.StartsWith("http"))
+        {
+            embedBuilder.WithThumbnailUrl(form.ThumbnailUrl);
+        }
+        if (form.ImageUrl.StartsWith("http"))
+        {
+            embedBuilder.WithImageUrl(form.ImageUrl);
+        }
 
         await channel!.SendMessageAsync($"{Context.Guild.EveryoneRole.Mention}",embed: embedBuilder.Build());
+        await RespondAsync("Выполнено!", ephemeral: true);
     }
     
     #endregion
@@ -83,17 +94,27 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
     {
         var channel = (IMessageChannel?)Context.Guild.GetChannel(ulong.Parse(_config["Settings:News_Channel_Id"] ?? string.Empty));
         if (channel == null)
+        {
+            await RespondAsync("Канал не найден!", ephemeral: true);
             return;
+        }
         
         var embedBuilder = new EmbedBuilder()
         {
             Title = form.UserTitle,
             Description = form.Description,
-            ThumbnailUrl = form.ThumbnailUrl,
-            ImageUrl = form.ImageUrl,
         };
+        if (form.ThumbnailUrl.StartsWith("http"))
+        {
+            embedBuilder.WithThumbnailUrl(form.ThumbnailUrl);
+        }
+        if (form.ImageUrl.StartsWith("http"))
+        {
+            embedBuilder.WithImageUrl(form.ImageUrl);
+        }
 
         await channel!.SendMessageAsync($"{Context.Guild.EveryoneRole.Mention}", embed: embedBuilder.Build());
+        await RespondAsync("Выполнено!", ephemeral: true);
     }
     #endregion
     
@@ -103,15 +124,24 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
     {
         var channel = (IMessageChannel?)Context.Guild.GetChannel(ulong.Parse(_config["Settings:News_Channel_Id"] ?? string.Empty));
         if (channel == null)
+        {
+            await RespondAsync("Канал не найден!", ephemeral: true);
             return;
+        }
         
         var embedBuilder = new EmbedBuilder()
         {
             Title = form.UserTitle,
             Description = form.Description,
-            ThumbnailUrl = form.ThumbnailUrl,
-            ImageUrl = form.ImageUrl,
         };
+        if (form.ThumbnailUrl.StartsWith("http"))
+        {
+            embedBuilder.WithThumbnailUrl(form.ThumbnailUrl);
+        }
+        if (form.ImageUrl.StartsWith("http"))
+        {
+            embedBuilder.WithImageUrl(form.ImageUrl);
+        }
         
         var componentsBuilder = new ComponentBuilder();
         
@@ -120,25 +150,49 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
         componentsBuilder.WithButton(_maybeButton);
         
         await channel!.SendMessageAsync($"{Context.Guild.EveryoneRole.Mention}", embed: embedBuilder.Build(), components: componentsBuilder.Build());
+        await RespondAsync("Выполнено!", ephemeral: true);
     }
     
     [ComponentInteraction("yes_button")]
     public async Task YesButtonHandler()
     {
-        var interaction = (IModalInteraction)Context.Interaction;
+        var interaction = (SocketMessageComponent?)Context.Interaction;
+        if (interaction == null)
+        {
+            await RespondAsync("Интеракция не найдена!", ephemeral: true);
+            return;
+        }
+
         var message = interaction.Message;
+        if (message == null)
+        {
+            await RespondAsync("Сообщение не найдено!", ephemeral: true);
+            return;
+        }
+
         var embedProper = message.Embeds.First();
+        if (embedProper == null)
+        {
+            await RespondAsync("Старый Embed не найден!", ephemeral: true);
+            return;
+        }
+
         var user = interaction.User;
+        if (user == null)
+        {
+            await RespondAsync("Пользователь не найден!", ephemeral: true);
+            return;
+        }
 
         #region Изменение Embed
 
-        var fieldsOld = embedProper!.Fields.ToList();
-        
+        var fieldsOld = embedProper.Fields.ToList();
+
         // Получаем текущие значения полей "Участвуют", "Не участвуют" и "Не определились"
-        var yesList =  new List<string>();
-        var noList =  new List<string>();
-        var maybeList =  new List<string>();
-        
+        var yesList = new List<string>();
+        var noList = new List<string>();
+        var maybeList = new List<string>();
+
         foreach (var field in fieldsOld)
         {
             switch (field.Name.ToLower())
@@ -167,21 +221,21 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
         var fieldYes = new EmbedFieldBuilder()
         {
             Name = "Участвуют",
-            Value = string.Join("\n", yesList.Count > 0 ? yesList : ["Пока никто не участвует"]),
+            Value = string.Join("\n", yesList.Count > 0 ? yesList : []),
             IsInline = true
         };
 
         var fieldNo = new EmbedFieldBuilder()
         {
             Name = "Не участвуют",
-            Value = string.Join("\n", noList.Count > 0 ? noList : ["Никто не отказался"]),
+            Value = string.Join("\n", noList.Count > 0 ? noList : []),
             IsInline = true
         };
 
         var fieldMaybe = new EmbedFieldBuilder()
         {
             Name = "Не определились",
-            Value = string.Join("\n", maybeList.Count > 0 ? maybeList : ["Никто не сомневается"]),
+            Value = string.Join("\n", maybeList.Count > 0 ? maybeList : []),
             IsInline = true
         };
 
@@ -211,16 +265,41 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
         })!;
 
         #endregion
+
+        await RespondAsync("Успешно!", ephemeral: true);
     }
 
     
     [ComponentInteraction("no_button")]
     public async Task NoButtonHandler()
     {
-        var interaction = (IModalInteraction)Context.Interaction;
+        var interaction = (SocketMessageComponent?)Context.Interaction;
+        if (interaction == null)
+        {
+            await RespondAsync("Интеракция не найдена!", ephemeral: true);
+            return;
+        }
+
         var message = interaction.Message;
+        if (message == null)
+        {
+            await RespondAsync("Сообщение не найдено!", ephemeral: true);
+            return;
+        }
+
         var embedProper = message.Embeds.First();
+        if (embedProper == null)
+        {
+            await RespondAsync("Старый Embed не найден!", ephemeral: true);
+            return;
+        }
+
         var user = interaction.User;
+        if (user == null)
+        {
+            await RespondAsync("Пользователь не найден!", ephemeral: true);
+            return;
+        }
 
         #region Изменение Embed
 
@@ -259,21 +338,21 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
         var fieldYes = new EmbedFieldBuilder()
         {
             Name = "Участвуют",
-            Value = string.Join("\n", yesList.Count > 0 ? yesList : ["Пока никто не участвует"]),
+            Value = string.Join("\n", yesList.Count > 0 ? yesList : []),
             IsInline = true
         };
 
         var fieldNo = new EmbedFieldBuilder()
         {
             Name = "Не участвуют",
-            Value = string.Join("\n", noList.Count > 0 ? noList : ["Никто не отказался"]),
+            Value = string.Join("\n", noList.Count > 0 ? noList : []),
             IsInline = true
         };
 
         var fieldMaybe = new EmbedFieldBuilder()
         {
             Name = "Не определились",
-            Value = string.Join("\n", maybeList.Count > 0 ? maybeList : ["Никто не сомневается"]),
+            Value = string.Join("\n", maybeList.Count > 0 ? maybeList : []),
             IsInline = true
         };
 
@@ -303,15 +382,40 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
         })!;
 
         #endregion
+        
+        await RespondAsync("Успешно!", ephemeral: true);
     }
     
     [ComponentInteraction("maybe_button")]
     public async Task MaybeButtonHandler()
     {
-        var interaction = (IModalInteraction)Context.Interaction;
+        var interaction = (SocketMessageComponent?)Context.Interaction;
+        if (interaction == null)
+        {
+            await RespondAsync("Интеракция не найдена!", ephemeral: true);
+            return;
+        }
+
         var message = interaction.Message;
+        if (message == null)
+        {
+            await RespondAsync("Сообщение не найдено!", ephemeral: true);
+            return;
+        }
+
         var embedProper = message.Embeds.First();
+        if (embedProper == null)
+        {
+            await RespondAsync("Старый Embed не найден!", ephemeral: true);
+            return;
+        }
+
         var user = interaction.User;
+        if (user == null)
+        {
+            await RespondAsync("Пользователь не найден!", ephemeral: true);
+            return;
+        }
 
         #region Изменение Embed
 
@@ -350,21 +454,21 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
         var fieldYes = new EmbedFieldBuilder()
         {
             Name = "Участвуют",
-            Value = string.Join("\n", yesList.Count > 0 ? yesList : ["Пока никто не участвует"]),
+            Value = string.Join("\n", yesList.Count > 0 ? yesList : []),
             IsInline = true
         };
 
         var fieldNo = new EmbedFieldBuilder()
         {
             Name = "Не участвуют",
-            Value = string.Join("\n", noList.Count > 0 ? noList : ["Никто не отказался"]),
+            Value = string.Join("\n", noList.Count > 0 ? noList : []),
             IsInline = true
         };
 
         var fieldMaybe = new EmbedFieldBuilder()
         {
             Name = "Не определились",
-            Value = string.Join("\n", maybeList.Count > 0 ? maybeList : ["Никто не сомневается"]),
+            Value = string.Join("\n", maybeList.Count > 0 ? maybeList : []),
             IsInline = true
         };
 
@@ -394,6 +498,8 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
         })!;
 
         #endregion
+        
+        await RespondAsync("Успешно!", ephemeral: true);
     }
     #endregion
 
@@ -427,12 +533,19 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
         {
             Title = form.UserTitle,
             Description = form.Description,
-            ThumbnailUrl = form.ThumbnailUrl,
-            ImageUrl = form.ImageUrl,
         };
+        if (form.ThumbnailUrl.StartsWith("http"))
+        {
+            embedBuilder.WithThumbnailUrl(form.ThumbnailUrl);
+        }
+        if (form.ImageUrl.StartsWith("http"))
+        {
+            embedBuilder.WithImageUrl(form.ImageUrl);
+        }
 
         // Редактируем сообщение
         await channel.ModifyMessageAsync(message.Id, properties => properties.Embed = embedBuilder.Build());
+        await RespondAsync("Выполнено!", ephemeral: true);
     }
 
     #endregion

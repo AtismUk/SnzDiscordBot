@@ -210,32 +210,35 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
         }
 
         // Удаляем пользователя из других списков
-        noList.Remove(user.Username);
-        maybeList.Remove(user.Username);
+        noList.Remove(user.Mention);
+        maybeList.Remove(user.Mention);
 
         // Если пользователя нет в списке "Да", добавляем его
-        if (!yesList.Contains(user.Username))
-            yesList.Add(user.Username);
+        if (!yesList.Contains(user.Mention))
+        {
+            yesList.Add(user.Mention);
+            yesList.Remove("Пока никто не участвует");
+        }
 
         // Собираем новые поля
         var fieldYes = new EmbedFieldBuilder()
         {
             Name = "Участвуют",
-            Value = string.Join("\n", yesList.Count > 0 ? yesList : []),
+            Value = string.Join("\n", yesList.Count > 0 ? yesList : ["Пока никто не участвует"]),
             IsInline = true
         };
 
         var fieldNo = new EmbedFieldBuilder()
         {
             Name = "Не участвуют",
-            Value = string.Join("\n", noList.Count > 0 ? noList : []),
+            Value = string.Join("\n", noList.Count > 0 ? noList : ["Никто не отказался"]),
             IsInline = true
         };
 
         var fieldMaybe = new EmbedFieldBuilder()
         {
             Name = "Не определились",
-            Value = string.Join("\n", maybeList.Count > 0 ? maybeList : []),
+            Value = string.Join("\n", maybeList.Count > 0 ? maybeList : ["Никто не определился"]),
             IsInline = true
         };
 
@@ -327,32 +330,35 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
         }
 
         // Удаляем пользователя из других списков
-        yesList.Remove(user.Username);
-        maybeList.Remove(user.Username);
+        yesList.Remove(user.Mention);
+        maybeList.Remove(user.Mention);
 
         // Если пользователя нет в списке "Да", добавляем его
-        if (!noList.Contains(user.Username))
-            noList.Add(user.Username);
+        if (!noList.Contains(user.Mention))
+        {
+            noList.Add(user.Mention);
+            noList.Remove("Никто не отказался");
+        }
 
         // Собираем новые поля
         var fieldYes = new EmbedFieldBuilder()
         {
             Name = "Участвуют",
-            Value = string.Join("\n", yesList.Count > 0 ? yesList : []),
+            Value = string.Join("\n", yesList.Count > 0 ? yesList : ["Пока никто не участвует"]),
             IsInline = true
         };
 
         var fieldNo = new EmbedFieldBuilder()
         {
             Name = "Не участвуют",
-            Value = string.Join("\n", noList.Count > 0 ? noList : []),
+            Value = string.Join("\n", noList.Count > 0 ? noList : ["Никто не отказался"]),
             IsInline = true
         };
 
         var fieldMaybe = new EmbedFieldBuilder()
         {
             Name = "Не определились",
-            Value = string.Join("\n", maybeList.Count > 0 ? maybeList : []),
+            Value = string.Join("\n", maybeList.Count > 0 ? maybeList : ["Никто не определился"]),
             IsInline = true
         };
 
@@ -443,32 +449,35 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
         }
 
         // Удаляем пользователя из других списков
-        noList.Remove(user.Username);
-        yesList.Remove(user.Username);
+        noList.Remove(user.Mention);
+        yesList.Remove(user.Mention);
 
         // Если пользователя нет в списке "Да", добавляем его
-        if (!maybeList.Contains(user.Username))
-            maybeList.Add(user.Username);
+        if (!maybeList.Contains(user.Mention))
+        {
+            maybeList.Add(user.Mention);
+            maybeList.Remove("Никто не определился");
+        }
 
         // Собираем новые поля
         var fieldYes = new EmbedFieldBuilder()
         {
             Name = "Участвуют",
-            Value = string.Join("\n", yesList.Count > 0 ? yesList : []),
+            Value = string.Join("\n", yesList.Count > 0 ? yesList : ["Пока никто не участвует"]),
             IsInline = true
         };
 
         var fieldNo = new EmbedFieldBuilder()
         {
             Name = "Не участвуют",
-            Value = string.Join("\n", noList.Count > 0 ? noList : []),
+            Value = string.Join("\n", noList.Count > 0 ? noList : ["Никто не отказался"]),
             IsInline = true
         };
 
         var fieldMaybe = new EmbedFieldBuilder()
         {
             Name = "Не определились",
-            Value = string.Join("\n", maybeList.Count > 0 ? maybeList : []),
+            Value = string.Join("\n", maybeList.Count > 0 ? maybeList : ["Никто не определился"]),
             IsInline = true
         };
 

@@ -37,7 +37,7 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
     }
 
     [SlashCommand("mention", "Запустить голосование. Type может быть только \"новость\", \"мероприятие\" или \"расписание\".")]
-    // [RequireUserPermission(GuildPermission.MentionEveryone)]
+    [RequireUserPermission(GuildPermission.MentionEveryone)]
     public async Task MentionCommand(string type)
     {
         switch (type.ToLower())

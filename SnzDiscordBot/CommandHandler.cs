@@ -33,35 +33,39 @@ public class CommandHandler
         _commands.ModalCommandExecuted += ModalCommandExecuted;
     }
 
-    private async Task ComponentCommandExecuted(ComponentCommandInfo componentCommandInfo, IInteractionContext interactionContext, IResult result)
+    private static async Task ComponentCommandExecuted(ComponentCommandInfo componentCommandInfo, IInteractionContext interactionContext, IResult result)
     {
         if (!result.IsSuccess)
         {
-            await interactionContext.Interaction.RespondAsync(result.ErrorReason, ephemeral: true);
+            var exec = (ExecuteResult)result;
+            await interactionContext.Interaction.RespondAsync($"{exec.ErrorReason}\n{exec.Exception}", ephemeral: true);
         }
     }
 
-    private async Task ModalCommandExecuted(ModalCommandInfo ModalCommandInfo, IInteractionContext interactionContext, IResult result)
+    private static async Task ModalCommandExecuted(ModalCommandInfo modalCommandInfo, IInteractionContext interactionContext, IResult result)
     {
         if (!result.IsSuccess)
         {
-            await interactionContext.Interaction.RespondAsync(result.ErrorReason, ephemeral: true);
+            var exec = (ExecuteResult)result;
+            await interactionContext.Interaction.RespondAsync($"{exec.ErrorReason}\n{exec.Exception}", ephemeral: true);
         }
     }
 
-    private async Task ContextCommandExecuted(ContextCommandInfo contextCommandInfo, IInteractionContext interactionContext, IResult result)
+    private static async Task ContextCommandExecuted(ContextCommandInfo contextCommandInfo, IInteractionContext interactionContext, IResult result)
     {
         if (!result.IsSuccess)
         {
-            await interactionContext.Interaction.RespondAsync(result.ErrorReason, ephemeral: true);
+            var exec = (ExecuteResult)result;
+            await interactionContext.Interaction.RespondAsync($"{exec.ErrorReason}\n{exec.Exception}", ephemeral: true);
         }
     }
 
-    private async Task SlashCommandExecuted(SlashCommandInfo slashCommand, IInteractionContext interactionContext, IResult result)
+    private static async Task SlashCommandExecuted(SlashCommandInfo slashCommand, IInteractionContext interactionContext, IResult result)
     {
         if (!result.IsSuccess)
         {
-            await interactionContext.Interaction.RespondAsync(result.ErrorReason, ephemeral: true);
+            var exec = (ExecuteResult)result;
+            await interactionContext.Interaction.RespondAsync($"{exec.ErrorReason}\n{exec.Exception}", ephemeral: true);
         }
     }
 
@@ -74,10 +78,11 @@ public class CommandHandler
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, ex.Message);
             if (socketInteraction.Type == InteractionType.ApplicationCommand)
             {
                 await socketInteraction.GetOriginalResponseAsync().ContinueWith(async (msg) => await msg.Result.DeleteAsync());
+                
+                await socketInteraction.FollowupAsync($"Произошла ошибка:\n```{ex}```", ephemeral: true);
             }
         }
     }

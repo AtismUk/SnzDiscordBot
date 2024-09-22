@@ -70,6 +70,11 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
 
         var embedBuilder = new EmbedBuilder()
         {
+            Author = new EmbedAuthorBuilder()
+            {
+                IconUrl = Context.User.GetAvatarUrl(),
+                Name = Context.User.Mention,
+            },
             Title = form.UserTitle,
             Description = form.Description,
         };
@@ -101,6 +106,11 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
         
         var embedBuilder = new EmbedBuilder()
         {
+            Author = new EmbedAuthorBuilder()
+            {
+                IconUrl = Context.User.GetAvatarUrl(),
+                Name = Context.User.Mention,
+            },
             Title = form.UserTitle,
             Description = form.Description,
         };
@@ -131,6 +141,11 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
         
         var embedBuilder = new EmbedBuilder()
         {
+            Author = new EmbedAuthorBuilder()
+            {
+                IconUrl = Context.User.GetAvatarUrl(),
+                Name = Context.User.Mention,
+            },
             Title = form.UserTitle,
             Description = form.Description,
         };
@@ -253,6 +268,17 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
             ThumbnailUrl = embedProper.Thumbnail?.ToString(),
             Fields = fieldsNew,
         };
+        
+        if (embedProper.Author is EmbedAuthor oldAuthor)
+        {
+            var author = new EmbedAuthorBuilder()
+            {
+                IconUrl = oldAuthor.IconUrl,
+                Name = oldAuthor.Name,
+            };
+            
+            embed.Author = author;
+        }
 
         // Строим кнопки
         var componentsBuilder = new ComponentBuilder();
@@ -271,7 +297,6 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
 
         await RespondAsync("Успешно!", ephemeral: true);
     }
-
     
     [ComponentInteraction("no_button")]
     public async Task NoButtonHandler()
@@ -373,6 +398,17 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
             ThumbnailUrl = embedProper.Thumbnail?.ToString(),
             Fields = fieldsNew,
         };
+        
+        if (embedProper.Author is EmbedAuthor oldAuthor)
+        {
+            var author = new EmbedAuthorBuilder()
+            {
+                IconUrl = oldAuthor.IconUrl,
+                Name = oldAuthor.Name,
+            };
+            
+            embed.Author = author;
+        }
 
         // Строим кнопки
         var componentsBuilder = new ComponentBuilder();
@@ -483,6 +519,8 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
 
         var fieldsNew = new List<EmbedFieldBuilder> { fieldYes, fieldNo, fieldMaybe };
 
+
+        
         // Создаем новый Embed
         var embed = new EmbedBuilder()
         {
@@ -493,6 +531,17 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
             Fields = fieldsNew,
         };
 
+        if (embedProper.Author is EmbedAuthor oldAuthor)
+        {
+            var author = new EmbedAuthorBuilder()
+            {
+                IconUrl = oldAuthor.IconUrl,
+                Name = oldAuthor.Name,
+            };
+            
+            embed.Author = author;
+        }
+        
         // Строим кнопки
         var componentsBuilder = new ComponentBuilder();
         componentsBuilder.WithButton(_yesButton);

@@ -73,7 +73,7 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
             Author = new EmbedAuthorBuilder()
             {
                 IconUrl = Context.User.GetAvatarUrl(),
-                Name = Context.User.Mention,
+                Name = Context.User.Username,
             },
             Title = form.UserTitle,
             Description = form.Description,
@@ -109,7 +109,7 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
             Author = new EmbedAuthorBuilder()
             {
                 IconUrl = Context.User.GetAvatarUrl(),
-                Name = Context.User.Mention,
+                Name = Context.User.Username,
             },
             Title = form.UserTitle,
             Description = form.Description,
@@ -144,7 +144,7 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
             Author = new EmbedAuthorBuilder()
             {
                 IconUrl = Context.User.GetAvatarUrl(),
-                Name = Context.User.Mention,
+                Name = Context.User.Username,
             },
             Title = form.UserTitle,
             Description = form.Description,

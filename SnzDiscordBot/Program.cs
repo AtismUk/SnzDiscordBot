@@ -22,7 +22,7 @@ class Program
             {
                 services.AddSingleton(new DiscordSocketClient(new DiscordSocketConfig
                 {
-                    GatewayIntents = GatewayIntents.Guilds | GatewayIntents.GuildMembers
+                    GatewayIntents = GatewayIntents.Guilds | GatewayIntents.GuildMembers | GatewayIntents.GuildMessages
                 }));
                 services.AddSingleton(x => new InteractionService(x.GetService<DiscordSocketClient>()));
                 services.AddSingleton<IConfiguration>(new ConfigurationBuilder()

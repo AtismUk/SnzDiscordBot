@@ -22,6 +22,7 @@ public class ApplicationModule : InteractionModuleBase<SocketInteractionContext>
         Style = ButtonStyle.Secondary,
     };
 
+
     #endregion
     private readonly IConfiguration _config;
     public ApplicationModule(IConfiguration config)
@@ -139,9 +140,11 @@ public class ApplicationModule : InteractionModuleBase<SocketInteractionContext>
 
         var acceptButtonDisabled = _acceptButton;
         acceptButtonDisabled.IsDisabled = true;
+        
 
-        var cancelButtonDisabled = _acceptButton;
+        var cancelButtonDisabled = _cancelButton;
         cancelButtonDisabled.IsDisabled = true;
+        cancelButtonDisabled.Style = ButtonStyle.Secondary;
 
         componentBuilder.WithButton(acceptButtonDisabled);
         componentBuilder.WithButton(cancelButtonDisabled);
@@ -211,9 +214,11 @@ public class ApplicationModule : InteractionModuleBase<SocketInteractionContext>
 
         var acceptButtonDisabled = _acceptButton;
         acceptButtonDisabled.IsDisabled = true;
+        acceptButtonDisabled.Style = ButtonStyle.Secondary;
 
-        var cancelButtonDisabled = _acceptButton;
+        var cancelButtonDisabled = _cancelButton;
         cancelButtonDisabled.IsDisabled = true;
+        
         componentBuilder.WithButton(acceptButtonDisabled);
         componentBuilder.WithButton(cancelButtonDisabled);
 

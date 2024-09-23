@@ -21,17 +21,6 @@ public class ApplicationModule : InteractionModuleBase<SocketInteractionContext>
         Label = "Отклонить",
         Style = ButtonStyle.Secondary,
     };
-    
-    private readonly ButtonBuilder _acceptButtonDisabled = new() {
-        CustomId = "accept_button", 
-        Label = "Принять", 
-        Style = ButtonStyle.Success,
-    };
-    private readonly ButtonBuilder _cancelButtonDisabled = new() {
-        CustomId = "cancel_button",
-        Label = "Отклонить",
-        Style = ButtonStyle.Secondary,
-    };
 
     #endregion
     private readonly IConfiguration _config;
@@ -147,15 +136,22 @@ public class ApplicationModule : InteractionModuleBase<SocketInteractionContext>
         embed.AddField("Субъективная оценка игры", embedProper.Fields[3].Value);
 
         ComponentBuilder componentBuilder = new();
-        
-        componentBuilder.WithButton(_acceptButtonDisabled);
-        componentBuilder.WithButton(_cancelButtonDisabled);
+
+        var acceptButtonDisabled = _acceptButton;
+        acceptButtonDisabled.IsDisabled = true;
+
+        var cancelButtonDisabled = _acceptButton;
+        cancelButtonDisabled.IsDisabled = true;
+
+        componentBuilder.WithButton(acceptButtonDisabled);
+        componentBuilder.WithButton(cancelButtonDisabled);
 
 
         await message.ModifyAsync(x =>
         {
             x.Embed = embed.Build();
             x.Components = componentBuilder.Build();
+            
         });
 
         await RespondAsync("Заявка принята", ephemeral: true);
@@ -211,8 +207,15 @@ public class ApplicationModule : InteractionModuleBase<SocketInteractionContext>
         embed.AddField("Причина отклонения", form.Text);
 
         ComponentBuilder componentBuilder = new();
-        componentBuilder.WithButton(_acceptButtonDisabled);
-        componentBuilder.WithButton(_cancelButtonDisabled);
+
+
+        var acceptButtonDisabled = _acceptButton;
+        acceptButtonDisabled.IsDisabled = true;
+
+        var cancelButtonDisabled = _acceptButton;
+        cancelButtonDisabled.IsDisabled = true;
+        componentBuilder.WithButton(acceptButtonDisabled);
+        componentBuilder.WithButton(cancelButtonDisabled);
 
 
         await message.ModifyAsync(x =>

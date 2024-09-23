@@ -10,10 +10,10 @@ using System.Threading.Tasks;
 
 namespace SnzDiscordBot.Services.Repo
 {
-    public class BaseDbRepo : IBaseDbRepo
+    public class BaseRepo : IBaseRepo
     {
         readonly AppDbContext _dbContext;
-        public BaseDbRepo(AppDbContext appDbContext)
+        public BaseRepo(AppDbContext appDbContext)
         {
             _dbContext = appDbContext;
         }
@@ -57,6 +57,44 @@ namespace SnzDiscordBot.Services.Repo
                 {
                     Exception = ex
                 };
+            }
+        }
+
+        public bool AddUpdateEntity<TEntity>(TEntity entity) where TEntity : BaseEntity
+        {
+            var dbSet = _dbContext.Set<TEntity>();
+            if (entity.Id == 0)
+            {
+                dbSet.Add(entity);
+            }
+            else
+            {
+                dbSet.Update(entity);
+            }
+            try
+            {
+                _dbContext.SaveChanges();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+
+        }
+
+        public bool DeleteEntity<TEntity>(TEntity entity) where TEntity : class
+        {
+            var dbSet = _dbContext.Set<TEntity>();
+            try
+            {
+                dbSet.Remove(entity);
+                _dbContext.SaveChanges();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
             }
         }
     }

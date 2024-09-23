@@ -2,12 +2,13 @@ using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
+using SnzDiscordBot.DataBase.Entities;
+using SnzDiscordBot.Services.Interfaces;
 
 namespace SnzDiscordBot.Modules;
 
 public class SettingsModule : InteractionModuleBase<SocketInteractionContext>
 {
-    
     private readonly IConfiguration _config;
     public SettingsModule(IConfiguration config)
     {
@@ -18,6 +19,8 @@ public class SettingsModule : InteractionModuleBase<SocketInteractionContext>
     [RequireUserPermission(GuildPermission.ManageChannels)]
     public async Task ConfigApplicationCommand(IChannel application_channel, IRole remove_role, IRole add_role)
     {
+
+
         if (Context.User is SocketGuildUser userGuild)
         {
             if (userGuild.Roles.Any(x => x.Permissions.BanMembers))

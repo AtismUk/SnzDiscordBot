@@ -35,7 +35,7 @@ class Program
                 {
                     options.UseSqlite("Data Source=DataBase/bot_bd.db");
                 });
-                services.AddScoped<IBaseDbRepo, BaseDbRepo>();
+                services.AddScoped<IBaseRepo, BaseRepo>();
 
                 services.AddHostedService<DiscordBotHandler>();
             }).ConfigureLogging(x =>

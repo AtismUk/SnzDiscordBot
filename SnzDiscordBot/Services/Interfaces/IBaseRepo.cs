@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace SnzDiscordBot.Services.Interfaces
 {
-    public interface IBaseDbRepo
+    public interface IBaseRepo
     {
         RepoResult<List<TEntity>> GetAllEntity<TEntity>() where TEntity : class;
 

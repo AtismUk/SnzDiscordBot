@@ -15,9 +15,14 @@ public sealed class AppDbContext : DbContext
         modelBuilder.Entity<SettingsEntity>()
             .HasIndex(x => x.GuildId)
             .IsUnique();
+
+        modelBuilder.Entity<MemberEntity>()
+            .HasIndex(x => x.UserId)
+            .IsUnique();
         
         base.OnModelCreating(modelBuilder);
     }
 
     public DbSet<SettingsEntity> SettingsEntities { get; set; }
+    public DbSet<MemberEntity> MemberEntities { get; set; }
 }

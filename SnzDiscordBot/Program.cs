@@ -34,6 +34,7 @@ class Program
                 services.AddSingleton<CommandHandler>();
 
                 services.AddSingleton<ISettingsService, SettingsService>();
+                services.AddSingleton<IMemberService, MemberService>();
                 
                 services.AddDbContext<AppDbContext>(options =>
                 {

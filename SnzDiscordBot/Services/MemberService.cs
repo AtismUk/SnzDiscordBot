@@ -35,4 +35,69 @@ public class MemberService : IMemberService
         
         return await _dbRepo.AddUpdateEntityAsync(member);
     }
+
+    public string GetRankName(Rank rank)
+    {
+        return rank switch
+        {
+            Rank.Rookie => "Новобранец",
+            Rank.Private => "Рядовой",
+            Rank.Corporal => "Ефрейтор",
+            Rank.JuniorSergeant => "Мл. Сержант",
+            Rank.Sergeant => "Сержант",
+            Rank.SeniorSergeant => "Ст. Сержант",
+            Rank.Foreman => "Старшина",
+            Rank.Ensign => "Прапорщик",
+            Rank.SeniorEnsign => "Ст. Прапорщик",
+            Rank.JuniorLieutenant => "Лейтенант",
+            Rank.Lieutenant => "Лейтенант",
+            Rank.SeniorLieutenant => "Лейтенант",
+            Rank.Captain => "Капитан",
+            Rank.Major => "Майор",
+            Rank.LieutenantColonel => "Подполковник",
+            Rank.Colonel => "Полковник",
+            _ => "Неизвестно"
+        };
+    }
+    
+    public string GetRoleName(Role role)
+    {
+        return role switch
+        {
+            Role.Commander => "Командир БГ",
+            Role.DeputyCommander => "Зам. Командир БГ",
+            Role.HumanResources => "Служба Кадров",
+            Role.Instructor => "Инструктор",
+            Role.Creative => "Творческий Отдел",
+            Role.Technical => "Технический Отдел",
+            Role.Founder => "Основатель Отряда",
+            _ => "Неизвестно"
+        };
+    }
+    
+    public string GetStatusName(Status status)
+    {
+        return status switch
+        {
+            Status.Active => "Активен",
+            Status.Vacation => "Отпуск",
+            Status.Reserve => "Резерв",
+            _ => "Неизвестно"
+        };
+    }
+    
+    public string GetGroupName(Group group)
+    {
+        return group switch
+        {
+            Group.First => "1-ая БГ \"Гранит\"",
+            Group.Second => "2-ая БГ \"Топаз\"",
+            Group.Third => "3-ая БГ \"Агат\"",
+            Group.TransportSupport => "ГТО \"Заря\"",
+            Group.FireSupport => "ГОП \"Тандем\"",
+            Group.Recon => "ГСР \"Линза\"",
+            Group.Leadership => "ГУ \"Полынь\"",
+            _ => "Неизвестно"
+        };
+    }
 }

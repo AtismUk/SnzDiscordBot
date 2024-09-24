@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace SnzDiscordBot.DataBase.Entities;
 
-namespace SnzDiscordBot.DataBase.Entities
+public class BaseEntity
 {
-    public class BaseEntity
-    {
-        public int Id { get; set; }
-    }
+    public int Id { get; set; } = 0;
 }

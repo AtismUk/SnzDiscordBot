@@ -1,10 +1,13 @@
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace SnzDiscordBot.DataBase.Entities;
 
+[Table("members")]
 public class MemberEntity : BaseEntity
 {
     public ulong GuildId { get; set; }
     public ulong UserId { get; set; }
-    public string Username { get; set; }
+    public required string Username { get; set; }
     public Rank Rank { get; set; } = Rank.Rookie;
     public Group Group { get; set; } = Group.Unknown;
     public Role[] Roles { get; set; } = [];
@@ -19,6 +22,7 @@ public enum Rank : int
     JuniorSergeant,
     Sergeant,
     SeniorSergeant,
+    Foreman,
     Ensign,
     SeniorEnsign,
     JuniorLieutenant,

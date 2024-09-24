@@ -1,31 +1,34 @@
 using System.Text;
 using Discord.Interactions;
-using Microsoft.Extensions.Configuration;
+using SnzDiscordBot.Services.Interfaces;
 
 namespace SnzDiscordBot.Modules;
 
 public class InfoModule : InteractionModuleBase<SocketInteractionContext>
 {
-    private readonly IConfiguration _config;
-    public InfoModule(IConfiguration config)
+    private readonly ISettingsService _settingsService;
+    
+    public InfoModule(ISettingsService settings)
     {
-        _config = config;
+        _settingsService = settings;
     }
     
     [SlashCommand("info", "Показывает настройки бота")]
     public async Task InfoCommand()
     {
+        var settings = await _settingsService.GetSettingsAsync(Context.Guild.Id);
+        
         var resultBuilder = new StringBuilder();
         
-        resultBuilder.AppendLine($"Канал аудита: <#{_config["Settings:Audit_Channel_Id"]}>");
+        resultBuilder.AppendLine($"Канал аудита: <#{settings.AuditChannelId}>");
         resultBuilder.AppendLine("## Настройки регистрации");
-        resultBuilder.AppendLine($"Канал регистрации: <#{_config["Settings:Application_channel_Id"]}>");
-        resultBuilder.AppendLine($"Удаляемая роль при рег.: <@&{_config["Settings:Remove_Application_Role_Id"]}>");
-        resultBuilder.AppendLine($"Выдаваемая роль при рег.: <@&{_config["Settings:Add_Application_Role_Id"]}>");
+        resultBuilder.AppendLine($"Канал регистрации: <#{settings.ApplicationChannelId}>");
+        resultBuilder.AppendLine($"Удаляемая роль при рег.: <@&{settings.ApplicationRemoveRoleId}>");
+        resultBuilder.AppendLine($"Выдаваемая роль при рег.: <@&{settings.ApplicationAddRoleId}>");
         resultBuilder.AppendLine("## Настройки оповещений");
-        resultBuilder.AppendLine($"Канал новостей: <#{_config["Settings:News_Channel_Id"]}>");
-        resultBuilder.AppendLine($"Канал мероприятий: <#{_config["Settings:Event_Channel_Id"]}>");
-        resultBuilder.AppendLine($"Канал расписания: <#{_config["Settings:Schedule_Channel_Id"]}>");
+        resultBuilder.AppendLine($"Канал новостей: <#{settings.NewsChannelId}>");
+        resultBuilder.AppendLine($"Канал мероприятий: <#{settings.EventChannelId}>");
+        resultBuilder.AppendLine($"Канал расписания: <#{settings.ScheduleChannelId}>");
         
         await RespondAsync(resultBuilder.ToString(), ephemeral: true);
     }

@@ -6,8 +6,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using SnzDiscordBot.DataBase;
+using SnzDiscordBot.Services;
 using SnzDiscordBot.Services.Interfaces;
 using SnzDiscordBot.Services.Repo;
 
@@ -17,6 +17,9 @@ class Program
 {
     static async Task Main()
     {
+        if (!Directory.Exists("Database"))
+            Directory.CreateDirectory("Database");
+        
         await Host.CreateDefaultBuilder()
             .ConfigureServices(services =>
             {
@@ -30,10 +33,11 @@ class Program
                         .Build());
                 services.AddSingleton<CommandHandler>();
 
+                services.AddSingleton<ISettingsService, SettingsService>();
                 
                 services.AddDbContext<AppDbContext>(options =>
                 {
-                    options.UseSqlite("Data Source=DataBase/bot_bd.db");
+                    options.UseSqlite("Data Source=DataBase/bot.db");
                 });
                 services.AddScoped<IBaseRepo, BaseRepo>();
 

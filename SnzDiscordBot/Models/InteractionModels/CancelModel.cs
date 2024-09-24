@@ -1,6 +1,7 @@
 ﻿using Discord.Interactions;
 
 namespace SnzDiscordBot.Models.InteractionModels;
+
 public class CancelModel : IModal
 {
     public string Title => "Причина отклонения";

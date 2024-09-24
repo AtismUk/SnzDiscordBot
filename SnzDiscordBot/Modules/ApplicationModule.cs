@@ -1,8 +1,8 @@
 using System.Text.RegularExpressions;
 using Discord;
 using Discord.Interactions;
-using Microsoft.Extensions.Configuration;
 using SnzDiscordBot.Models.InteractionModels;
+using SnzDiscordBot.Services.Interfaces;
 using Color = Discord.Color;
 
 namespace SnzDiscordBot.Modules;
@@ -24,16 +24,19 @@ public class ApplicationModule : InteractionModuleBase<SocketInteractionContext>
 
 
     #endregion
-    private readonly IConfiguration _config;
-    public ApplicationModule(IConfiguration config)
+    private readonly ISettingsService _settingsService;
+    
+    public ApplicationModule(ISettingsService settings)
     {
-        _config = config;
+        _settingsService = settings;
     }
     
     [SlashCommand("application", "Отправить заявку на вступление")]
     public async Task ApplicationCommand()
     {
-        var channelId = ulong.Parse(_config["Settings:Application_channel_Id"] ?? string.Empty);
+        var settings = await _settingsService.GetSettingsAsync(Context.Guild.Id);
+        
+        var channelId = settings.ApplicationChannelId;
 
         if (Context.Guild.Channels.FirstOrDefault(x => x.Id == channelId) != null)
         {
@@ -91,6 +94,8 @@ public class ApplicationModule : InteractionModuleBase<SocketInteractionContext>
     public async Task AcceptButtonHandler()
     {
 
+        var settings = await _settingsService.GetSettingsAsync(Context.Guild.Id);
+        
         #region Изменяем пользователя
 
         var interaction = (IComponentInteraction)Context.Interaction;
@@ -110,9 +115,9 @@ public class ApplicationModule : InteractionModuleBase<SocketInteractionContext>
             await RespondAsync("Пользователь не найден на сервере", ephemeral: true);
         }
 
-        await user!.RemoveRoleAsync(ulong.Parse(_config["Settings:Remove_Application_Role_Id"]!));
+        await user!.RemoveRoleAsync(settings.ApplicationRemoveRoleId);
 
-        await user.AddRoleAsync(ulong.Parse(_config["Settings:Add_Application_Role_Id"]!));
+        await user.AddRoleAsync(settings.ApplicationAddRoleId);
 
         await user.ModifyAsync(x => x.Nickname = "[SNZ] " + embedProper.Fields[0].Value);
 

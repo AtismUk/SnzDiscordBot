@@ -1,101 +1,100 @@
-﻿using Discord;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using SnzDiscordBot.DataBase;
 using SnzDiscordBot.DataBase.Entities;
 using SnzDiscordBot.Services.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace SnzDiscordBot.Services.Repo
+namespace SnzDiscordBot.Services.Repo;
+
+public class BaseRepo : IBaseRepo
 {
-    public class BaseRepo : IBaseRepo
+    private readonly ILogger<BaseRepo> _logger;
+    public AppDbContext DbContext { get; }
+    public BaseRepo(AppDbContext appDbContext, ILogger<BaseRepo> logger)
     {
-        readonly AppDbContext _dbContext;
-        public BaseRepo(AppDbContext appDbContext)
+        DbContext = appDbContext;
+        _logger = logger;
+    }
+
+    public async Task<RepoResult<List<TEntity>>> GetAllEntityAsync<TEntity>() where TEntity : class
+    {
+        try
         {
-            _dbContext = appDbContext;
+            var dbSet = DbContext.Set<TEntity>();
+            var res = await dbSet.ToListAsync();
+            return new ()
+            {
+                IsSuccess = true,
+                Result = res
+            };
+        }
+        catch (Exception ex)
+        {
+            return new()
+            {
+                Exception = ex
+            };
+        }
+    }
+
+    public async Task<RepoResult<TEntity>> GetEntityByIdAsync<TEntity>(int id) where TEntity : BaseEntity
+    {
+        try
+        {
+            var dbSet = DbContext.Set<TEntity>();
+            var res = await dbSet.FirstOrDefaultAsync(x => x.Id == id);
+            return new()
+            {
+                IsSuccess = true,
+                Result = res
+            };
+        }
+        catch (Exception ex)
+        {
+            return new()
+            {
+                Exception = ex
+            };
+        }
+    }
+
+    public async Task<bool> AddUpdateEntityAsync<TEntity>(TEntity entity) where TEntity : BaseEntity
+    {
+        var dbSet = DbContext.Set<TEntity>();
+        if (entity.Id == 0)
+        {
+            dbSet.Add(entity);
+        }
+        else
+        {
+            dbSet.Update(entity);
+        }
+        try
+        {
+            await DbContext.SaveChangesAsync();
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex.ToString());
+            return false;
         }
 
-        public RepoResult<List<TEntity>> GetAllEntity<TEntity>() where TEntity : class
+    }
+
+    public async Task<bool> DeleteEntityAsync<TEntity>(TEntity entity) where TEntity : class
+    {
+        var dbSet = DbContext.Set<TEntity>();
+        try
         {
-            try
-            {
-                var dbSet = _dbContext.Set<TEntity>();
-                var res = dbSet.ToList();
-                return new()
-                {
-                    IsSuccess = true,
-                    Result = res
-                };
-            }
-            catch (Exception ex)
-            {
-                return new()
-                {
-                    Exception = ex
-                };
-            }
+            dbSet.Remove(entity);
+            await DbContext.SaveChangesAsync();
+            return true;
         }
-
-        public RepoResult<TEntity> GetEntityById<TEntity>(int id) where TEntity : BaseEntity
+        catch (Exception ex)
         {
-            try
-            {
-                var dbSet = _dbContext.Set<TEntity>();
-                var res = dbSet.FirstOrDefault(x => x.Id == id);
-                return new()
-                {
-                    IsSuccess = true,
-                    Result = res!
-                };
-            }
-            catch (Exception ex)
-            {
-                return new()
-                {
-                    Exception = ex
-                };
-            }
-        }
-
-        public bool AddUpdateEntity<TEntity>(TEntity entity) where TEntity : BaseEntity
-        {
-            var dbSet = _dbContext.Set<TEntity>();
-            if (entity.Id == 0)
-            {
-                dbSet.Add(entity);
-            }
-            else
-            {
-                dbSet.Update(entity);
-            }
-            try
-            {
-                _dbContext.SaveChanges();
-                return true;
-            }
-            catch (Exception ex)
-            {
-                return false;
-            }
-
-        }
-
-        public bool DeleteEntity<TEntity>(TEntity entity) where TEntity : class
-        {
-            var dbSet = _dbContext.Set<TEntity>();
-            try
-            {
-                dbSet.Remove(entity);
-                _dbContext.SaveChanges();
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
+            _logger.LogError(ex.ToString());
+            return false;
         }
     }
 }

@@ -1,15 +1,20 @@
 using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
-using Microsoft.Extensions.Configuration;
 using SnzDiscordBot.Models.InteractionModels;
+using SnzDiscordBot.Services.Interfaces;
 
 namespace SnzDiscordBot.Modules;
 
 public class MentionModule : InteractionModuleBase<SocketInteractionContext>
 {
-    private readonly IConfiguration _config;
-
+    private readonly ISettingsService _settingsService;
+    
+    public MentionModule(ISettingsService settings)
+    {
+        _settingsService = settings;
+    }
+    
     #region Buttons
     private readonly ButtonBuilder _yesButton = new()
     {
@@ -30,11 +35,6 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
         Style = ButtonStyle.Secondary,
     };
     #endregion
-
-    public MentionModule(IConfiguration config)
-    {
-        _config = config;
-    }
 
     [SlashCommand("mention", "Запустить голосование. Type может быть только \"новость\", \"мероприятие\" или \"расписание\".")]
     [RequireUserPermission(GuildPermission.MentionEveryone)]
@@ -61,7 +61,8 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
     [ModalInteraction("news_form")]
     public async Task HandlerNewsForm(MentionModel form)
     {
-        var channel = (IMessageChannel?)Context.Guild.GetChannel(ulong.Parse(_config["Settings:News_Channel_Id"] ?? string.Empty));
+        var settings = await _settingsService.GetSettingsAsync(Context.Guild.Id);
+        var channel = (IMessageChannel?)Context.Guild.GetChannel(settings.NewsChannelId);
         if (channel == null)
         {
             await RespondAsync("Канал не найден!", ephemeral: true);
@@ -87,7 +88,7 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
             embedBuilder.WithImageUrl(form.ImageUrl);
         }
 
-        await channel!.SendMessageAsync($"{Context.Guild.EveryoneRole.Mention}",embed: embedBuilder.Build());
+        await channel.SendMessageAsync($"{Context.Guild.EveryoneRole.Mention}",embed: embedBuilder.Build());
         await RespondAsync("Выполнено!", ephemeral: true);
     }
     
@@ -97,7 +98,8 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
     [ModalInteraction("schedule_form")]
     public async Task HandlerScheduleForm(MentionModel form)
     {
-        var channel = (IMessageChannel?)Context.Guild.GetChannel(ulong.Parse(_config["Settings:Schedule_Channel_Id"] ?? string.Empty));
+        var settings = await _settingsService.GetSettingsAsync(Context.Guild.Id);
+        var channel = (IMessageChannel?)Context.Guild.GetChannel(settings.ScheduleChannelId);
         if (channel == null)
         {
             await RespondAsync("Канал не найден!", ephemeral: true);
@@ -123,7 +125,7 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
             embedBuilder.WithImageUrl(form.ImageUrl);
         }
 
-        await channel!.SendMessageAsync($"{Context.Guild.EveryoneRole.Mention}", embed: embedBuilder.Build());
+        await channel.SendMessageAsync($"{Context.Guild.EveryoneRole.Mention}", embed: embedBuilder.Build());
         await RespondAsync("Выполнено!", ephemeral: true);
     }
     #endregion
@@ -132,7 +134,8 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
     [ModalInteraction("event_form")]
     public async Task HandlerEventForm(MentionModel form)
     {
-        var channel = (IMessageChannel?)Context.Guild.GetChannel(ulong.Parse(_config["Settings:Event_Channel_Id"] ?? string.Empty));
+        var settings = await _settingsService.GetSettingsAsync(Context.Guild.Id);
+        var channel = (IMessageChannel?)Context.Guild.GetChannel(settings.EventChannelId);
         if (channel == null)
         {
             await RespondAsync("Канал не найден!", ephemeral: true);
@@ -164,7 +167,7 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
         componentsBuilder.WithButton(_noButton);
         componentsBuilder.WithButton(_maybeButton);
         
-        await channel!.SendMessageAsync($"{Context.Guild.EveryoneRole.Mention}", embed: embedBuilder.Build(), components: componentsBuilder.Build());
+        await channel.SendMessageAsync($"{Context.Guild.EveryoneRole.Mention}", embed: embedBuilder.Build(), components: componentsBuilder.Build());
         await RespondAsync("Выполнено!", ephemeral: true);
     }
     
@@ -269,7 +272,7 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
             Fields = fieldsNew,
         };
         
-        if (embedProper.Author is EmbedAuthor oldAuthor)
+        if (embedProper.Author is { } oldAuthor)
         {
             var author = new EmbedAuthorBuilder()
             {
@@ -331,7 +334,7 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
 
         #region Изменение Embed
 
-        var fieldsOld = embedProper!.Fields.ToList();
+        var fieldsOld = embedProper.Fields.ToList();
         
         // Получаем текущие значения полей "Участвуют", "Не участвуют" и "Не определились"
         var yesList =  new List<string>();
@@ -399,7 +402,7 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
             Fields = fieldsNew,
         };
         
-        if (embedProper.Author is EmbedAuthor oldAuthor)
+        if (embedProper.Author is { } oldAuthor)
         {
             var author = new EmbedAuthorBuilder()
             {
@@ -461,7 +464,7 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
 
         #region Изменение Embed
 
-        var fieldsOld = embedProper!.Fields.ToList();
+        var fieldsOld = embedProper.Fields.ToList();
         
         // Получаем текущие значения полей "Участвуют", "Не участвуют" и "Не определились"
         var yesList =  new List<string>();
@@ -531,7 +534,7 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
             Fields = fieldsNew,
         };
 
-        if (embedProper.Author is EmbedAuthor oldAuthor)
+        if (embedProper.Author is { } oldAuthor)
         {
             var author = new EmbedAuthorBuilder()
             {

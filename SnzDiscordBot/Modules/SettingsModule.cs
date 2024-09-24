@@ -1,53 +1,31 @@
 using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
-using Microsoft.Extensions.Configuration;
-using SnzDiscordBot.DataBase.Entities;
 using SnzDiscordBot.Services.Interfaces;
 
 namespace SnzDiscordBot.Modules;
 
 public class SettingsModule : InteractionModuleBase<SocketInteractionContext>
 {
-    private readonly IConfiguration _config;
-    public SettingsModule(IConfiguration config)
-    {
-        _config = config;
-    }
-
-    [SlashCommand("config-application", "Настройка регистрации")]
-    [RequireUserPermission(GuildPermission.ManageChannels)]
-    public async Task ConfigApplicationCommand(IChannel application_channel, IRole remove_role, IRole add_role)
-    {
-
-
-        if (Context.User is SocketGuildUser userGuild)
-        {
-            if (userGuild.Roles.Any(x => x.Permissions.BanMembers))
-            {
-                _config["Settings:Application_Channel_Id"] = application_channel.Id.ToString();
-                _config["Settings:Remove_Application_Role_Id"] = remove_role.Id.ToString();
-                _config["Settings:Add_Application_Role_Id"] = add_role.Id.ToString();
-
-                await RespondAsync("Данные успешно сохранены!", ephemeral: true);
-            }
-        }
-    }
+    private readonly ISettingsService _settingsService;
     
-    [SlashCommand("config-mention", "Настройка оповещений")]
-    [RequireUserPermission(GuildPermission.ManageChannels)]
-    public async Task ConfigMentionCommand(IChannel news_channel, IChannel event_channel, IChannel schedule_channel)
+    public SettingsModule(ISettingsService settings)
     {
-        if (Context.User is SocketGuildUser userGuild)
-        {
-            if (userGuild.Roles.Any(x => x.Permissions.BanMembers))
-            {
-                _config["Settings:News_Channel_Id"] = news_channel.Id.ToString();
-                _config["Settings:Event_Channel_Id"] = event_channel.Id.ToString();
-                _config["Settings:Schedule_Channel_Id"] = schedule_channel.Id.ToString();
+        _settingsService = settings;
+    }
 
-                await RespondAsync("Данные успешно сохранены!", ephemeral: true);
-            }
-        }
+    [SlashCommand("config", "Настройка бота")]
+    [RequireUserPermission(GuildPermission.ManageChannels)]
+    public async Task ConfigApplicationCommand(IChannel? audit_channel = null, IChannel? application_channel = null, IRole? application_remove_role = null, IRole? application_add_role = null, IChannel? event_channel = null, IChannel? news_channel = null, IChannel? schedule_channel = null)
+    {
+        if (Context.User is not SocketGuildUser userGuild)
+            return;
+        
+        if (!userGuild.Roles.Any(x => x.Permissions.BanMembers))
+            return;
+        
+        await _settingsService.SaveSettingsAsync(Context.Guild.Id, audit_channel?.Id, application_channel?.Id, application_remove_role?.Id, application_add_role?.Id, event_channel?.Id, news_channel?.Id, schedule_channel?.Id);
+
+        await RespondAsync("Данные успешно сохранены!", ephemeral: true);
     }
 }

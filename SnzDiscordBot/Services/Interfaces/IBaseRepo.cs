@@ -1,17 +1,18 @@
 ﻿using SnzDiscordBot.DataBase.Entities;
 using SnzDiscordBot.Services.Repo;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using SnzDiscordBot.DataBase;
 
-namespace SnzDiscordBot.Services.Interfaces
+namespace SnzDiscordBot.Services.Interfaces;
+
+public interface IBaseRepo
 {
-    public interface IBaseRepo
-    {
-        RepoResult<List<TEntity>> GetAllEntity<TEntity>() where TEntity : class;
+    AppDbContext DbContext { get; }
+    
+    Task<RepoResult<List<TEntity>>> GetAllEntityAsync<TEntity>() where TEntity : class;
 
-        RepoResult<TEntity> GetEntityById<TEntity>(int id) where TEntity : BaseEntity;
-    }
+    Task<RepoResult<TEntity>> GetEntityByIdAsync<TEntity>(int id) where TEntity : BaseEntity;
+    
+    Task<bool> AddUpdateEntityAsync<TEntity>(TEntity newEntity) where TEntity : BaseEntity;
+
+    Task<bool> DeleteEntityAsync<TEntity>(TEntity entity) where TEntity : class;
 }

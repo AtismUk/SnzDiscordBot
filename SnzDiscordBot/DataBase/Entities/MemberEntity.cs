@@ -10,11 +10,11 @@ public class MemberEntity : BaseEntity
     public required string Username { get; set; }
     public Rank Rank { get; set; } = Rank.Rookie;
     public Group Group { get; set; } = Group.Unknown;
-    public Role[] Roles { get; set; } = [];
+    public List<Role> Roles { get; set; } = [];
     public Status Status { get; set; } = Status.Active;
 }
 
-public enum Rank : int
+public enum Rank
 {
     Rookie,
     Private,
@@ -34,7 +34,7 @@ public enum Rank : int
     Colonel
 }
 
-public enum Group : int
+public enum Group
 {
     Unknown,
     First,
@@ -46,7 +46,7 @@ public enum Group : int
     Leadership
 }
 
-public enum Role : int
+public enum Role
 {
     Commander,
     DeputyCommander,
@@ -57,7 +57,7 @@ public enum Role : int
     Founder
 }
 
-public enum Status : int
+public enum Status
 {
     Unknown,
     Active,

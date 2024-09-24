@@ -1,6 +1,5 @@
 using Discord;
 using Discord.Interactions;
-using Discord.WebSocket;
 using SnzDiscordBot.Services.Interfaces;
 
 namespace SnzDiscordBot.Modules;

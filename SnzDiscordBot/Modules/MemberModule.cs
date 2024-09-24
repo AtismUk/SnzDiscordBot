@@ -1,7 +1,5 @@
-using System.Text;
 using Discord;
 using Discord.Interactions;
-using Discord.WebSocket;
 using SnzDiscordBot.Services.Interfaces;
 
 namespace SnzDiscordBot.Modules;
@@ -50,7 +48,7 @@ public class MemberModule : InteractionModuleBase<SocketInteractionContext>
             }
         };
 
-        if (member.Roles.Length > 0)
+        if (member.Roles.Count > 0)
         {
             var roles = string.Join(", ", member.Roles.Select(role => _memberService.GetRoleName(role)));
 

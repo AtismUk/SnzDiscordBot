@@ -24,7 +24,7 @@ public class SettingsModule : InteractionModuleBase<SocketInteractionContext>
         if (!userGuild.Roles.Any(x => x.Permissions.BanMembers))
             return;
         
-        await _settingsService.SaveSettingsAsync(Context.Guild.Id, audit_channel?.Id, application_channel?.Id, application_remove_role?.Id, application_add_role?.Id, event_channel?.Id, news_channel?.Id, schedule_channel?.Id);
+        await _settingsService.SaveSettingsAsync(Context.Guild.Id, audit_channel?.Id, application_channel?.Id, application_add_role?.Id, application_remove_role?.Id, event_channel?.Id, news_channel?.Id, schedule_channel?.Id);
 
         await RespondAsync("Данные успешно сохранены!", ephemeral: true);
     }

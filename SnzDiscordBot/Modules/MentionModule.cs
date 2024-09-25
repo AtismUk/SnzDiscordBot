@@ -170,7 +170,7 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
         componentsBuilder.WithButton(_maybeButton);
         
         var message = await channel.SendMessageAsync($"{Context.Guild.EveryoneRole.Mention}", embed: embedBuilder.Build(), components: componentsBuilder.Build());
-        if (await _eventService.AddUpdateEventAsync(Context.Guild.Id, channel.Id, message.Id))
+        if (!await _eventService.AddUpdateEventAsync(Context.Guild.Id, channel.Id, message.Id))
         {
             await RespondAsync("Выполнено с ошибкой базы данных.", ephemeral: true);
         }
@@ -307,9 +307,9 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
 
         #endregion
 
-        if (await _eventService.VoteYesAsync(Context.Guild.Id, message.Channel.Id, message.Id, user.Id))
+        if (!await _eventService.VoteYesAsync(Context.Guild.Id, message.Channel.Id, message.Id, user.Id))
         {
-            await RespondAsync("Выполнено с ошибкой БД.", ephemeral: true);
+            await RespondAsync("Выполнено с ошибкой базы данных.", ephemeral: true);
         }
         else
         {
@@ -444,9 +444,9 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
 
         #endregion
         
-        if (await _eventService.VoteNoAsync(Context.Guild.Id, message.Channel.Id, message.Id, user.Id))
+        if (!await _eventService.VoteNoAsync(Context.Guild.Id, message.Channel.Id, message.Id, user.Id))
         {
-            await RespondAsync("Выполнено с ошибкой БД.", ephemeral: true);
+            await RespondAsync("Выполнено с ошибкой базы данных.", ephemeral: true);
         }
         else
         {
@@ -583,9 +583,9 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
 
         #endregion
         
-        if (await _eventService.VoteMaybeAsync(Context.Guild.Id, message.Channel.Id, message.Id, user.Id))
+        if (!await _eventService.VoteMaybeAsync(Context.Guild.Id, message.Channel.Id, message.Id, user.Id))
         {
-            await RespondAsync("Выполнено с ошибкой БД.", ephemeral: true);
+            await RespondAsync("Выполнено с ошибкой базы данных.", ephemeral: true);
         }
         else
         {

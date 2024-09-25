@@ -4,7 +4,7 @@ namespace SnzDiscordBot.Services.Interfaces;
 
 public interface IEventService
 {
-    Task<EventEntity?> GetEventAsync(ulong guildId, ulong channelId, ulong messageId);
+    Task<EventEntity> GetEventAsync(ulong guildId, ulong channelId, ulong messageId);
 
     Task<bool> AddUpdateEventAsync(ulong guildId, ulong channelId, ulong messageId, 
         List<ulong>? votedYes = null,

@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using SnzDiscordBot.DataBase;
+using SnzDiscordBot.DataBase.Entities;
 using SnzDiscordBot.Services;
 using SnzDiscordBot.Services.Interfaces;
 using SnzDiscordBot.Services.Repo;
@@ -35,6 +36,7 @@ class Program
 
                 services.AddSingleton<ISettingsService, SettingsService>();
                 services.AddSingleton<IMemberService, MemberService>();
+                services.AddSingleton<IEventService, EventService>();
                 
                 services.AddDbContext<AppDbContext>(options =>
                 {

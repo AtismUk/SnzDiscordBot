@@ -1,34 +1,23 @@
 using System.Text.RegularExpressions;
 using Discord;
 using Discord.Interactions;
+using SnzDiscordBot.DataBase.Entities;
 using SnzDiscordBot.Models.InteractionModels;
 using SnzDiscordBot.Services.Interfaces;
 using Color = Discord.Color;
+using Group = SnzDiscordBot.DataBase.Entities.Group;
 
 namespace SnzDiscordBot.Modules;
 
 public class ApplicationModule : InteractionModuleBase<SocketInteractionContext>
 {
-    #region Buttons
-
-    private readonly ButtonBuilder _acceptButton = new() {
-        CustomId = "accept_button", 
-        Label = "Принять", 
-        Style = ButtonStyle.Success,
-    };
-    private readonly ButtonBuilder _cancelButton = new() {
-        CustomId = "cancel_button",
-        Label = "Отклонить",
-        Style = ButtonStyle.Secondary,
-    };
-
-
-    #endregion
     private readonly ISettingsService _settingsService;
+    private readonly IMemberService _memberService;
     
-    public ApplicationModule(ISettingsService settings)
+    public ApplicationModule(ISettingsService settings, IMemberService memberService)
     {
         _settingsService = settings;
+        _memberService = memberService;
     }
     
     [SlashCommand("application", "Отправить заявку на вступление")]
@@ -81,8 +70,20 @@ public class ApplicationModule : InteractionModuleBase<SocketInteractionContext>
         embed.AddField("Субъективная оценка игры", point.ToString() + "/10");
 
         ComponentBuilder componentBuilder = new();
-        componentBuilder.WithButton(_acceptButton);
-        componentBuilder.WithButton(_cancelButton);
+        
+        ButtonBuilder acceptButton = new() {
+            CustomId = "accept_button", 
+            Label = "Принять", 
+            Style = ButtonStyle.Success,
+        };
+        ButtonBuilder cancelButton = new() {
+            CustomId = "cancel_button",
+            Label = "Отклонить",
+            Style = ButtonStyle.Secondary,
+        };
+            
+        componentBuilder.WithButton(acceptButton);
+        componentBuilder.WithButton(cancelButton);
 
         await RespondAsync(embed: embed.Build(), components: componentBuilder.Build());
 
@@ -93,78 +94,94 @@ public class ApplicationModule : InteractionModuleBase<SocketInteractionContext>
     [RequireUserPermission(GuildPermission.ManageRoles)]
     public async Task AcceptButtonHandler()
     {
-
-        var settings = await _settingsService.GetSettingsAsync(Context.Guild.Id);
-        
-        #region Изменяем пользователя
-
-        var interaction = (IComponentInteraction)Context.Interaction;
-
-        var message = interaction.Message;
-
-        var embedProper = message.Embeds.First();
-
-        await Context.Guild.DownloadUsersAsync();
-
-        var userId = ulong.Parse(embedProper.Footer!.Value.Text);
-
-        var user = Context.Guild.Users.FirstOrDefault(x => x.Id == userId);
-
-        if (user == null)
+        try
         {
-            await RespondAsync("Пользователь не найден на сервере", ephemeral: true);
-        }
+            await Context.Guild.DownloadUsersAsync();
 
-        await user!.RemoveRoleAsync(settings.ApplicationRemoveRoleId);
+            var settings = await _settingsService.GetSettingsAsync(Context.Guild.Id);
 
-        await user.AddRoleAsync(settings.ApplicationAddRoleId);
+            var interaction = (IComponentInteraction)Context.Interaction;
 
-        await user.ModifyAsync(x => x.Nickname = "[SNZ] " + embedProper.Fields[0].Value);
+            var message = interaction.Message;
 
+            var embedProper = message.Embeds.First();
 
-        #endregion
+            var userId = ulong.Parse(embedProper.Footer!.Value.Text);
 
-        #region Изменение Embed
-
-        var embed = new EmbedBuilder()
-        {
-            Author = new()
+            var user = Context.Guild.Users.FirstOrDefault(x => x.Id == userId);
+            if (user == null)
             {
-                Name = user.GlobalName,
-                IconUrl = user.GetAvatarUrl(),
-            },
-            Color = Color.Green,
-            Title = "Заявка принята ✅",
-        };
-        embed.AddField("Позывной", embedProper.Fields[0].Value);
-        embed.AddField("Steam", embedProper.Fields[1].Value);
-        embed.AddField("От куда узнал", embedProper.Fields[2].Value);
-        embed.AddField("Субъективная оценка игры", embedProper.Fields[3].Value);
+                await RespondAsync("Пользователь не найден на сервере", ephemeral: true);
+                return;
+            }
 
-        ComponentBuilder componentBuilder = new();
+            #region Изменяем пользователя
 
-        var acceptButtonDisabled = _acceptButton;
-        acceptButtonDisabled.IsDisabled = true;
-        
+            await user!.RemoveRoleAsync(settings.ApplicationRemoveRoleId);
 
-        var cancelButtonDisabled = _cancelButton;
-        cancelButtonDisabled.IsDisabled = true;
-        cancelButtonDisabled.Style = ButtonStyle.Secondary;
+            await user.AddRoleAsync(settings.ApplicationAddRoleId);
 
-        componentBuilder.WithButton(acceptButtonDisabled);
-        componentBuilder.WithButton(cancelButtonDisabled);
+            await user.ModifyAsync(x => x.Nickname = "[SNZ] " + embedProper.Fields[0].Value);
 
 
-        await message.ModifyAsync(x =>
+            #endregion
+
+            #region Изменение Embed
+
+            var embed = new EmbedBuilder()
+            {
+                Author = new()
+                {
+                    Name = user.GlobalName,
+                    IconUrl = user.GetAvatarUrl(),
+                },
+                Color = Color.Green,
+                Title = "Заявка принята ✅",
+            };
+            embed.AddField("Позывной", embedProper.Fields[0].Value);
+            embed.AddField("Steam", embedProper.Fields[1].Value);
+            embed.AddField("От куда узнал", embedProper.Fields[2].Value);
+            embed.AddField("Субъективная оценка игры", embedProper.Fields[3].Value);
+
+            ComponentBuilder componentBuilder = new();
+
+            componentBuilder.WithButton(new ButtonBuilder()
+            {
+                CustomId = "accept_button",
+                Label = "Принять",
+                Style = ButtonStyle.Success,
+                IsDisabled = true
+            });
+            componentBuilder.WithButton(new ButtonBuilder()
+            {
+                CustomId = "cancel_button",
+                Label = "Отклонить",
+                Style = ButtonStyle.Secondary,
+                IsDisabled = true
+            });
+
+            await message.ModifyAsync(x =>
+            {
+                x.Embed = embed.Build();
+                x.Components = componentBuilder.Build();
+
+            });
+
+            #endregion
+
+            #region Записываем в бд
+
+            await _memberService.AddUpdateMemberAsync(Context.Guild.Id, user.Id, embedProper.Fields[0].Value,
+                Rank.Rookie, Group.Unknown, Status.Active, []);
+
+            #endregion
+
+            await RespondAsync("Заявка принята", ephemeral: true);
+        }
+        catch (Exception e)
         {
-            x.Embed = embed.Build();
-            x.Components = componentBuilder.Build();
-            
-        });
-
-        await RespondAsync("Заявка принята", ephemeral: true);
-        #endregion
-
+            await RespondAsync(e.ToString(), ephemeral: true);
+        }
     }
 
 
@@ -173,7 +190,6 @@ public class ApplicationModule : InteractionModuleBase<SocketInteractionContext>
     public async Task CancelButtonHandler()
     {
         await RespondWithModalAsync<CancelModel>("cancel_form");
-
     }
 
 
@@ -216,16 +232,18 @@ public class ApplicationModule : InteractionModuleBase<SocketInteractionContext>
 
         ComponentBuilder componentBuilder = new();
 
-
-        var acceptButtonDisabled = _acceptButton;
-        acceptButtonDisabled.IsDisabled = true;
-        acceptButtonDisabled.Style = ButtonStyle.Secondary;
-
-        var cancelButtonDisabled = _cancelButton;
-        cancelButtonDisabled.IsDisabled = true;
-        
-        componentBuilder.WithButton(acceptButtonDisabled);
-        componentBuilder.WithButton(cancelButtonDisabled);
+        componentBuilder.WithButton(new ButtonBuilder() {
+            CustomId = "accept_button", 
+            Label = "Принять", 
+            Style = ButtonStyle.Secondary,
+            IsDisabled = true
+        });
+        componentBuilder.WithButton(new ButtonBuilder() {
+            CustomId = "cancel_button",
+            Label = "Отклонить",
+            Style = ButtonStyle.Secondary,
+            IsDisabled = true
+        });
 
 
         await message.ModifyAsync(x =>

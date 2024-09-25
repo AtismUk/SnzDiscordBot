@@ -9,10 +9,12 @@ namespace SnzDiscordBot.Modules;
 public class MentionModule : InteractionModuleBase<SocketInteractionContext>
 {
     private readonly ISettingsService _settingsService;
+    private readonly IEventService _eventService;
     
-    public MentionModule(ISettingsService settings)
+    public MentionModule(ISettingsService settings, IEventService eventService)
     {
         _settingsService = settings;
+        _eventService = eventService;
     }
     
     #region Buttons
@@ -167,8 +169,15 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
         componentsBuilder.WithButton(_noButton);
         componentsBuilder.WithButton(_maybeButton);
         
-        await channel.SendMessageAsync($"{Context.Guild.EveryoneRole.Mention}", embed: embedBuilder.Build(), components: componentsBuilder.Build());
-        await RespondAsync("Выполнено!", ephemeral: true);
+        var message = await channel.SendMessageAsync($"{Context.Guild.EveryoneRole.Mention}", embed: embedBuilder.Build(), components: componentsBuilder.Build());
+        if (await _eventService.AddUpdateEventAsync(Context.Guild.Id, channel.Id, message.Id))
+        {
+            await RespondAsync("Выполнено с ошибкой базы данных.", ephemeral: true);
+        }
+        else
+        {
+            await RespondAsync("Выполнено!", ephemeral: true);
+        }
     }
     
     [ComponentInteraction("yes_button")]
@@ -298,7 +307,14 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
 
         #endregion
 
-        await RespondAsync("Успешно!", ephemeral: true);
+        if (await _eventService.VoteYesAsync(Context.Guild.Id, message.Channel.Id, message.Id, user.Id))
+        {
+            await RespondAsync("Выполнено с ошибкой БД.", ephemeral: true);
+        }
+        else
+        {
+            await RespondAsync("Успешно!", ephemeral: true);
+        }
     }
     
     [ComponentInteraction("no_button")]
@@ -428,7 +444,14 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
 
         #endregion
         
-        await RespondAsync("Успешно!", ephemeral: true);
+        if (await _eventService.VoteNoAsync(Context.Guild.Id, message.Channel.Id, message.Id, user.Id))
+        {
+            await RespondAsync("Выполнено с ошибкой БД.", ephemeral: true);
+        }
+        else
+        {
+            await RespondAsync("Успешно!", ephemeral: true);
+        }
     }
     
     [ComponentInteraction("maybe_button")]
@@ -560,7 +583,14 @@ public class MentionModule : InteractionModuleBase<SocketInteractionContext>
 
         #endregion
         
-        await RespondAsync("Успешно!", ephemeral: true);
+        if (await _eventService.VoteMaybeAsync(Context.Guild.Id, message.Channel.Id, message.Id, user.Id))
+        {
+            await RespondAsync("Выполнено с ошибкой БД.", ephemeral: true);
+        }
+        else
+        {
+            await RespondAsync("Успешно!", ephemeral: true);
+        }
     }
     #endregion
 }

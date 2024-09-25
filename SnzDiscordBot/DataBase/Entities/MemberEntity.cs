@@ -5,8 +5,7 @@ namespace SnzDiscordBot.DataBase.Entities;
 [Table("members")]
 public class MemberEntity : BaseEntity
 {
-    public ulong GuildId { get; set; }
-    public ulong UserId { get; set; }
+    public required ulong UserId { get; set; }
     public required string Username { get; set; }
     public Rank Rank { get; set; } = Rank.Rookie;
     public Group Group { get; set; } = Group.Unknown;

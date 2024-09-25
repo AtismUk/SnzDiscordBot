@@ -105,7 +105,7 @@ public class CommandHandler
         var auditChannel = (IMessageChannel?)await interactionContext.Guild.GetChannelAsync(settings.AuditChannelId);
         if (auditChannel == null)
         {
-            _logger.LogWarning($"{interactionContext.Guild.Name}: No audit channel configured!");
+            _logger.LogWarning($"{interactionContext.Guild.Id}:{interactionContext.Guild.Name}: No audit channel configured!");
             return;
         }
 

@@ -20,7 +20,7 @@ public class MemberService : IMemberService
         return member;
     }
 
-    public async Task<bool> AddUpdateMemberAsync(ulong guildId, ulong userId, string? username, Rank? rank, Group? group, List<Role>? roles, Status? status)
+    public async Task<bool> AddUpdateMemberAsync(ulong guildId, ulong userId, string? username = null, Rank? rank = null, Group? group = null, List<Role>? roles = null, Status? status = null)
     {
         var member = await GetMemberAsync(guildId, userId);
         

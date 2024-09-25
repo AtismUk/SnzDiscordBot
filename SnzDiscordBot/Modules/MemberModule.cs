@@ -1,5 +1,6 @@
 using Discord;
 using Discord.Interactions;
+using SnzDiscordBot.DataBase.Entities;
 using SnzDiscordBot.Services.Interfaces;
 
 namespace SnzDiscordBot.Modules;
@@ -72,5 +73,15 @@ public class MemberModule : InteractionModuleBase<SocketInteractionContext>
         };
         
         await RespondAsync(embed: emberBuilder.Build());
+    }
+
+    [SlashCommand("update-member", "Обновить данные участника")]
+    public async Task UpdateMemberCommand(IUser user, string? username = null)
+    {
+        var member = await _memberService.GetMemberAsync(Context.Guild.Id, user.Id) ?? new MemberEntity() { Username = username ?? "Не заполнено" };
+
+        member.Username = username ?? member.Username;
+        
+        await _memberService.AddUpdateMemberAsync(Context.Guild.Id, user.Id, member.Username);
     }
 }

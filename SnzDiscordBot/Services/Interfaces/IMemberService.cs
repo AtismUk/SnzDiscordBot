@@ -5,7 +5,7 @@ namespace SnzDiscordBot.Services.Interfaces;
 public interface IMemberService
 {
     Task<MemberEntity?> GetMemberAsync(ulong guildId, ulong userId);
-    Task<bool> AddUpdateMemberAsync(ulong guildId, ulong userId, string? username, Rank? rank, Group? group, List<Role>? roles, Status? status);
+    Task<bool> AddUpdateMemberAsync(ulong guildId, ulong userId, string? username = null, Rank? rank = null, Group? group = null, List<Role>? roles = null, Status? status = null);
 
     string GetRankName(Rank rank);
     

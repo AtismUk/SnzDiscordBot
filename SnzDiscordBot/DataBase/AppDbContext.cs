@@ -20,9 +20,14 @@ public sealed class AppDbContext : DbContext
             .HasIndex(x => x.UserId)
             .IsUnique();
         
+        modelBuilder.Entity<EventEntity>()
+            .HasIndex(x => x.MessageId)
+            .IsUnique();
+        
         base.OnModelCreating(modelBuilder);
     }
 
     public DbSet<SettingsEntity> SettingsEntities { get; set; }
     public DbSet<MemberEntity> MemberEntities { get; set; }
+    public DbSet<EventEntity> EventEntities { get; set; }
 }

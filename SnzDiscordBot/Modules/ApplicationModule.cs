@@ -117,7 +117,7 @@ public class ApplicationModule : InteractionModuleBase<SocketInteractionContext>
 
             #region Изменяем пользователя
 
-            await user!.RemoveRoleAsync(settings.ApplicationRemoveRoleId);
+            await user.RemoveRoleAsync(settings.ApplicationRemoveRoleId);
 
             await user.AddRoleAsync(settings.ApplicationAddRoleId);
 

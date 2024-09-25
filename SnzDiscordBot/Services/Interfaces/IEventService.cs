@@ -4,16 +4,21 @@ namespace SnzDiscordBot.Services.Interfaces;
 
 public interface IEventService
 {
-    Task<EventEntity> GetEventAsync(ulong guildId, ulong channelId, ulong messageId);
+    Task<EventEntity?> GetEventAsync(ulong guildId, ulong channelId, ulong messageId);
 
     Task<bool> AddUpdateEventAsync(ulong guildId, ulong channelId, ulong messageId, 
-        List<ulong>? votedYes = null,
+        List<ulong>? votedYes = null, 
         List<ulong>? votedNo = null, 
-        List<ulong>? votedMaybe = null);
+        List<ulong>? votedMaybe = null, 
+        List<ulong>? came = null);
 
     Task<bool> VoteYesAsync(ulong guildId, ulong channelId, ulong messageId, ulong userId);
 
     Task<bool> VoteNoAsync(ulong guildId, ulong channelId, ulong messageId, ulong userId);
 
     Task<bool> VoteMaybeAsync(ulong guildId, ulong channelId, ulong messageId, ulong userId);
+    
+    Task<bool> AddCame(ulong guildId, ulong channelId, ulong messageId, ulong userId);
+
+    Task<EventEntity?> GetLastEvent(ulong guildId, ulong userId);
 }

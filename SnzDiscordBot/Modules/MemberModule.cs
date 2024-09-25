@@ -8,10 +8,12 @@ namespace SnzDiscordBot.Modules;
 public class MemberModule : InteractionModuleBase<SocketInteractionContext>
 {
     private readonly IMemberService _memberService;
+    private readonly IEventService _eventService;
     
-    public MemberModule(IMemberService memberService)
+    public MemberModule(IMemberService memberService, IEventService eventService)
     {
         _memberService = memberService;
+        _eventService = eventService;
     }
     
     [SlashCommand("member-info", "Посмотреть данные участника")]
@@ -24,6 +26,8 @@ public class MemberModule : InteractionModuleBase<SocketInteractionContext>
             await RespondAsync("Пользователь не найден!", ephemeral: true);
             return;
         }
+        
+        var lastEvent = await _eventService.GetLastEvent(Context.Guild.Id, member.UserId);
         
         var fields = new List<EmbedFieldBuilder>
         {
@@ -57,6 +61,16 @@ public class MemberModule : InteractionModuleBase<SocketInteractionContext>
             {
                 Name = "Роли",
                 Value = roles
+            });
+        }
+
+        Console.WriteLine(lastEvent?.DateTime.ToString("dd/MM/yyyy HH:mm")+" asddddddddddddddddddddddddddddddddddddddd");
+        if (lastEvent != null)
+        {
+            fields.Add(new EmbedFieldBuilder
+            {
+                Name = "Был на играх последний раз",
+                Value = lastEvent.DateTime.ToString("yyyy-MM-dd HH:mm")
             });
         }
 

@@ -7,6 +7,7 @@ public class EventEntity : BaseEntity
 {
     public required ulong ChannelId { get; set; }
     public required ulong MessageId { get; set; }
+    public required DateTimeOffset DateTime { get; set; }
     public List<ulong> VotedYesUserIds { get; set; } = [];
     public List<ulong> VotedNoUserIds { get; set; } = [];
     public List<ulong> VotedMaybeUserIds { get; set; } = [];

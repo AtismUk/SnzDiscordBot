@@ -76,12 +76,23 @@ public class MemberModule : InteractionModuleBase<SocketInteractionContext>
     }
 
     [SlashCommand("update-member", "Обновить данные участника")]
-    public async Task UpdateMemberCommand(IUser user, string? username = null)
+    public async Task UpdateMemberCommand(IUser user, string? username = null, string? rank = null, string? group = null, string? status = null, string? roles = null)
     {
-        var member = await _memberService.GetMemberAsync(Context.Guild.Id, user.Id) ?? new MemberEntity() { Username = username ?? "Не заполнено" };
+        var parsedRank = string.IsNullOrEmpty(rank) ? (Rank?)null : Enum.Parse<Rank>(rank, true);
+        var parsedGroup = string.IsNullOrEmpty(group) ? (Group?)null : Enum.Parse<Group>(group, true);
+        var parsedStatus = string.IsNullOrEmpty(status) ? (Status?)null : Enum.Parse<Status>(status, true);
+        var parsedRoles = string.IsNullOrEmpty(roles) ? null : roles
+            .Split(',')
+            .Select(r => Enum.Parse<Role>(r, true))
+            .ToList();
 
-        member.Username = username ?? member.Username;
-        
-        await _memberService.AddUpdateMemberAsync(Context.Guild.Id, user.Id, member.Username);
+        if (await _memberService.AddUpdateMemberAsync(Context.Guild.Id, user.Id, username, parsedRank, parsedGroup, parsedStatus, parsedRoles))
+        {
+            await RespondAsync("Пользователь обновлен успешно!", ephemeral: true);
+        }
+        else
+        {
+            await RespondAsync("Ошибка базы данных!", ephemeral: true);
+        }
     }
 }

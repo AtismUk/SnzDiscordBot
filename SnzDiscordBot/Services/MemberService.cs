@@ -20,12 +20,14 @@ public class MemberService : IMemberService
         return member;
     }
 
-    public async Task<bool> AddUpdateMemberAsync(ulong guildId, ulong userId, string? username = null, Rank? rank = null, Group? group = null, List<Role>? roles = null, Status? status = null)
+    public async Task<bool> AddUpdateMemberAsync(ulong guildId, ulong userId, string? username = null, Rank? rank = null, Group? group = null, Status? status = null, List<Role>? roles = null)
     {
-        var member = await GetMemberAsync(guildId, userId);
-        
-        if (member == null)
-            return false;
+        var member = await GetMemberAsync(guildId, userId) ?? new MemberEntity
+        {
+            GuildId = guildId,
+            UserId = userId,
+            Username = "Не определен",
+        };
         
         member.Username = username ?? member.Username;
         member.Rank = rank ?? member.Rank;

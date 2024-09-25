@@ -3,8 +3,8 @@ using System.Text;
 using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using SnzDiscordBot.Services.Interfaces;
 
 namespace SnzDiscordBot;
 
@@ -14,15 +14,15 @@ public class CommandHandler
     private readonly InteractionService _commands;
     private readonly IServiceProvider _service;
     private readonly ILogger _logger;
-    private readonly IConfiguration _config;
+    private readonly ISettingsService _settingsService;
 
-    public CommandHandler(DiscordSocketClient client, InteractionService interactionService, IServiceProvider service, ILogger<CommandHandler> logger, IConfiguration config)
+    public CommandHandler(DiscordSocketClient client, InteractionService interactionService, IServiceProvider service, ILogger<CommandHandler> logger, ISettingsService settingsService)
     {
         _client = client;
         _commands = interactionService;
         _service = service;
         _logger = logger;
-        _config = config;
+        _settingsService = settingsService;
     }
 
     public async Task InitializeAsync()
@@ -101,7 +101,8 @@ public class CommandHandler
 
     private async Task LogInChannel<T>(CommandInfo<T> commandInfo, IInteractionContext interactionContext, IResult result) where T : class, IParameterInfo
     {
-        var auditChannel = (IMessageChannel?)await interactionContext.Guild.GetChannelAsync(ulong.Parse(_config["Settings:Audit_Channel_Id"]!));
+        var settings = await _settingsService.GetSettingsAsync(interactionContext.Guild.Id);
+        var auditChannel = (IMessageChannel?)await interactionContext.Guild.GetChannelAsync(settings.AuditChannelId);
         if (auditChannel == null)
         {
             _logger.LogWarning($"{interactionContext.Guild.Name}: No audit channel configured!");

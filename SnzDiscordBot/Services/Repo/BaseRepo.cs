@@ -61,16 +61,16 @@ public class BaseRepo : IBaseRepo
     public async Task<bool> AddUpdateEntityAsync<TEntity>(TEntity entity) where TEntity : BaseEntity
     {
         var dbSet = DbContext.Set<TEntity>();
-        if (entity.Id == 0)
-        {
-            dbSet.Add(entity);
-        }
-        else
-        {
-            dbSet.Update(entity);
-        }
         try
         {
+            if (entity.Id == 0)
+            {
+                dbSet.Add(entity);
+            }
+            else
+            {
+                dbSet.Update(entity);
+            }
             await DbContext.SaveChangesAsync();
             return true;
         }

@@ -4,13 +4,7 @@ namespace SnzDiscordBot.Services.Interfaces;
 
 public interface ISettingsService
 {
-    Task<SettingsEntity> GetSettingsAsync(ulong guildId);
-    Task<bool> SaveSettingsAsync(ulong guildId, 
-        ulong? auditChannelId = null, 
-        ulong? applicationChannelId = null, 
-        ulong? applicationAddRoleId = null, 
-        ulong? applicationRemoveRoleId = null, 
-        ulong? eventChannelId = null, 
-        ulong? newsChannelId = null, 
-        ulong? scheduleChannelId = null);
+    Task<SettingsEntity?> GetSettingsAsync(ulong guildId);
+    
+    Task<SettingsEntity?> UpdateSettingsAsync(ulong guildId, ulong? auditChannelId = null, ulong? applicationChannelId = null, ulong? applicationAddRoleId = null, ulong? applicationRemoveRoleId = null, ulong? newsChannelId = null, ulong? eventsChannelId = null, ulong? scheduleChannelId = null);
 }

@@ -1,5 +1,3 @@
-
-using Microsoft.EntityFrameworkCore;
 using SnzDiscordBot.DataBase.Entities;
 using SnzDiscordBot.Services.Interfaces;
 
@@ -7,44 +5,34 @@ namespace SnzDiscordBot.Services;
 
 public class SettingsService : ISettingsService
 {
-    private readonly IBaseRepo _dbRepo;
+    private readonly IBaseRepo _baseRepo;
     
-    public SettingsService(IBaseRepo dbRepo)
+    public SettingsService(IBaseRepo baseRepo)
     {
-        _dbRepo = dbRepo;
+        _baseRepo = baseRepo;
     }
     
-    public async Task<SettingsEntity> GetSettingsAsync(ulong guildId)
+    public async Task<SettingsEntity?> GetSettingsAsync(ulong guildId)
     {
-        var dbSet  = _dbRepo.DbContext.Set<SettingsEntity>();
-        var settings = await dbSet.FirstOrDefaultAsync(x => x.GuildId == guildId);
-        if (settings == null)
-        {
-            settings = new SettingsEntity() { GuildId = guildId };
-            await _dbRepo.AddUpdateEntityAsync(settings);
-        }
-        return settings;
+        // Пытаемся найти первую подходящую запись или создаем новую.
+        return await _baseRepo.FirstOrDefaultAsync<SettingsEntity>(s => s.GuildId == guildId) ?? await UpdateSettingsAsync(guildId);
     }
 
-    public async Task<bool> SaveSettingsAsync(ulong guildId, 
-        ulong? auditChannelId = null, 
-        ulong? applicationChannelId = null, 
-        ulong? applicationAddRoleId = null, 
-        ulong? applicationRemoveRoleId = null, 
-        ulong? eventChannelId = null, 
-        ulong? newsChannelId = null, 
-        ulong? scheduleChannelId = null)
+    public async Task<SettingsEntity?> UpdateSettingsAsync(ulong guildId, ulong? auditChannelId = null, ulong? applicationChannelId = null, ulong? applicationAddRoleId = null, ulong? applicationRemoveRoleId = null, ulong? newsChannelId = null, ulong? eventsChannelId = null, ulong? scheduleChannelId = null)
     {
-        var settings = await GetSettingsAsync(guildId);
-
+        // Пытаемся найти существующую для изменения или создаем новую.
+        var settings = await GetSettingsAsync(guildId) ?? new SettingsEntity(guildId);
+        
+        // Обновляем данные
         settings.AuditChannelId = auditChannelId ?? settings.AuditChannelId;
         settings.ApplicationChannelId = applicationChannelId ?? settings.ApplicationChannelId;
         settings.ApplicationAddRoleId = applicationAddRoleId ?? settings.ApplicationAddRoleId;
         settings.ApplicationRemoveRoleId = applicationRemoveRoleId ?? settings.ApplicationRemoveRoleId;
-        settings.EventChannelId = eventChannelId ?? settings.EventChannelId;
         settings.NewsChannelId = newsChannelId ?? settings.NewsChannelId;
-        settings.ScheduleChannelId = scheduleChannelId ?? settings.ScheduleChannelId;
-        
-        return await _dbRepo.AddUpdateEntityAsync(settings);
+        settings.EventsChannelId = eventsChannelId ?? settings.EventsChannelId;
+        settings.SchedulesChannelId = scheduleChannelId ?? settings.SchedulesChannelId;
+            
+        // Передаем в BaseRepo
+        return await _baseRepo.AddUpdateEntityAsync(settings);
     }
 }

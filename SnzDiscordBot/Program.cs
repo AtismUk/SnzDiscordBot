@@ -9,7 +9,6 @@ using Microsoft.Extensions.Logging;
 using SnzDiscordBot.DataBase;
 using SnzDiscordBot.Services;
 using SnzDiscordBot.Services.Interfaces;
-using SnzDiscordBot.Services.Repo;
 
 namespace SnzDiscordBot;
 
@@ -32,7 +31,10 @@ class Program
                         .AddJsonFile("AppSettings.json", optional: false, reloadOnChange: true)
                         .Build());
                 services.AddSingleton<CommandHandler>();
-
+                
+                services.AddSingleton<IAwardService, AwardService>();
+                services.AddSingleton<IEventService, EventService>();
+                services.AddSingleton<IMemberService, MemberService>();
                 services.AddSingleton<ISettingsService, SettingsService>();
                 
                 services.AddDbContext<AppDbContext>(options =>

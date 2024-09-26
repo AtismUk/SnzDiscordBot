@@ -32,8 +32,8 @@ internal class DiscordBotHandler : IHostedService
             LogSeverity.Error => LogLevel.Error,
             LogSeverity.Warning => LogLevel.Warning,
             LogSeverity.Info => LogLevel.Information,
-            LogSeverity.Verbose => LogLevel.Debug,
-            LogSeverity.Debug => LogLevel.Trace,
+            LogSeverity.Debug => LogLevel.Debug,
+            LogSeverity.Verbose => LogLevel.Trace,
             _ => LogLevel.Information
         };
         
@@ -43,7 +43,7 @@ internal class DiscordBotHandler : IHostedService
     }
 
     public async Task StartAsync(CancellationToken cancellationToken)
-    {
+    {   
         var commands = _interactionService;
 
         _discordSocketClient.Log += Log;

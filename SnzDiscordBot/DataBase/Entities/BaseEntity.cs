@@ -1,6 +1,10 @@
-﻿namespace SnzDiscordBot.DataBase.Entities;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace SnzDiscordBot.DataBase.Entities;
 
 public class BaseEntity
 {
-    public int Id { get; set; } = 0;
+    [Key, Column(Order = 0)]
+    public int Id { get; } = 0;
 }

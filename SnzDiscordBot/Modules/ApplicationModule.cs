@@ -40,7 +40,7 @@ public class ApplicationModule : InteractionModuleBase<SocketInteractionContext>
     }
 
     [ModalInteraction("application_form")]
-    public async Task HandlerApplicationForm(ApplicationModel form)
+    public async Task HandlerApplicationForm(ApplicationModel form)     
     {
         var settings = await _settingsService.GetSettingsAsync(Context.Guild.Id);
         if (settings == null)
@@ -223,14 +223,14 @@ public class ApplicationModule : InteractionModuleBase<SocketInteractionContext>
         await RespondWithModalAsync<ApplicationCancelModel>("cancel_form");
     }
 
-
+    
     [ModalInteraction("cancel_form")]
     public async Task HandlerCancelForm(ApplicationCancelModel form)
     {
         #region Проверки
 
-        var interaction = (IComponentInteraction)Context.Interaction;
-        if (interaction == null)
+        var interaction = ;
+        if (Context.Interaction )
         {
             await RespondAsync("Ошибка! Не удалось найти интеракцию.", ephemeral: true);
             return;

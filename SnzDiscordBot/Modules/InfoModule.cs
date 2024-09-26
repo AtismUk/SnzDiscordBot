@@ -17,6 +17,11 @@ public class InfoModule : InteractionModuleBase<SocketInteractionContext>
     public async Task InfoCommand()
     {
         var settings = await _settingsService.GetSettingsAsync(Context.Guild.Id);
+        if (settings == null)
+        {
+            await RespondAsync("Ошибка базы данных! Не удалось получить настройки.", ephemeral: true);
+            return;
+        }
         
         var resultBuilder = new StringBuilder();
         
@@ -27,8 +32,8 @@ public class InfoModule : InteractionModuleBase<SocketInteractionContext>
         resultBuilder.AppendLine($"Выдаваемая роль при рег.: <@&{settings.ApplicationAddRoleId}>");
         resultBuilder.AppendLine("## Настройки оповещений");
         resultBuilder.AppendLine($"Канал новостей: <#{settings.NewsChannelId}>");
-        resultBuilder.AppendLine($"Канал мероприятий: <#{settings.EventChannelId}>");
-        resultBuilder.AppendLine($"Канал расписания: <#{settings.ScheduleChannelId}>");
+        resultBuilder.AppendLine($"Канал мероприятий: <#{settings.EventsChannelId}>");
+        resultBuilder.AppendLine($"Канал расписания: <#{settings.SchedulesChannelId}>");
         
         await RespondAsync(resultBuilder.ToString(), ephemeral: true);
     }

@@ -18,7 +18,7 @@ public class MemberService : IMemberService
         return await _baseRepo.FirstOrDefaultAsync<MemberEntity>(s => s.GuildId == guildId && s.UserId == userId) ?? await UpdateMemberAsync(guildId, userId);
     }
 
-    public async Task<MemberEntity?> UpdateMemberAsync(ulong guildId, ulong userId, string? username = null, Rank? rank = null, Group? group = null, List<Role>? roles = null, Status? status = null, List<AwardEntity>? awards = null)
+    public async Task<MemberEntity?> UpdateMemberAsync(ulong guildId, ulong userId, string? username = null, Rank? rank = null, Group? group = null, List<Role>? roles = null, Status? status = null)
     {
         // Пытаемся найти существующую запись для изменения или создаем новую.
         var member = await GetMemberAsync(guildId, userId) ?? new MemberEntity(guildId, userId);

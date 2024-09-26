@@ -284,7 +284,7 @@ public class ApplicationModule : InteractionModuleBase<SocketInteractionContext>
         {
             Author = new()
             {
-                Name = user!.GlobalName,
+                Name = user.GlobalName,
                 IconUrl = user.GetAvatarUrl(),
             },
             Color = Color.Red,

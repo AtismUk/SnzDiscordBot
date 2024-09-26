@@ -15,7 +15,7 @@ public class AddRoleAllModule : InteractionModuleBase<SocketInteractionContext>
         _memberService = memberService;
     }
     
-    [SlashCommand("addRoleAll", "Выдать роль всем.")]
+    [SlashCommand("addroleall", "Выдать роль всем.")]
     [RequireUserPermission(GuildPermission.ManageRoles)]
     public async Task AddRoleAllCommand(IRole add_role, string? ignore_roles = "", string? update_status = null)
     {

@@ -1,17 +1,26 @@
 using Discord;
 using Discord.Interactions;
 using System.Text;
+using SnzDiscordBot.DataBase.Entities;
+using SnzDiscordBot.Services.Interfaces;
 
 namespace SnzDiscordBot.Modules;
 
 public class AddRoleAllModule : InteractionModuleBase<SocketInteractionContext>
 {
-    [SlashCommand("addroleall", "Выдать роль всем")]
+    private readonly IMemberService _memberService;
+    
+    public AddRoleAllModule(IMemberService memberService)
+    {
+        _memberService = memberService;
+    }
+    
+    [SlashCommand("addRoleAll", "Выдать роль всем.")]
     [RequireUserPermission(GuildPermission.ManageRoles)]
-    public async Task AddRoleAllCommand(IRole add_role, string? ignore_roles = "")
+    public async Task AddRoleAllCommand(IRole add_role, string? ignore_roles = "", string? update_status = null)
     {
         // Отправляем ответ сразу, чтобы не улететь в таймаут.
-        await DeferAsync();
+        await DeferAsync(ephemeral: true);
         
         // Определяем строки.
         var resultMessage = new StringBuilder();
@@ -36,10 +45,27 @@ public class AddRoleAllModule : InteractionModuleBase<SocketInteractionContext>
         }
         
         #endregion
+        
+        #region Обрабатываем статус
 
+        Status? targetStatus = null;
+        
+        if (update_status != null)
+        {
+            if (!Enum.TryParse<Status>(update_status, out var status))
+            {
+                targetStatus = status;
+                await FollowupAsync("Не удалось распознать целевой статус!\nДоступны варианты:\n-Unknown\n-Active\n-Vacation\n-Reserve\n-Left", ephemeral: true);
+                return; 
+            }
+        }
+
+        #endregion
+        
         #region Выдаем пользователям роль.
 
         int addedCount = 0;
+        int changedStatusCount = 0;
         
         await foreach (var users in Context.Guild.GetUsersAsync())
         {
@@ -52,11 +78,22 @@ public class AddRoleAllModule : InteractionModuleBase<SocketInteractionContext>
                     continue;
                 
                 await user.AddRoleAsync(add_role);
+
+                if (await _memberService.UpdateMemberAsync(Context.Guild.Id, user.Id, status: targetStatus) == null)
+                {
+                    errorBuilder.AppendLine($"Не удалось изменить статус пользователю: {user.Mention}");
+                }
+                else
+                {
+                    changedStatusCount++;
+                }
                 addedCount++;
             }
         }
         
         resultMessage.AppendLine($"Роль {add_role.Name} была добавлена {addedCount} пользователям.");
+        if (targetStatus != null)
+            resultMessage.AppendLine($"Статус изменен {changedStatusCount} пользователям на {targetStatus.ToString()}.");
 
         #endregion
 
@@ -67,7 +104,7 @@ public class AddRoleAllModule : InteractionModuleBase<SocketInteractionContext>
             resultMessage.Append(errorBuilder.ToString());
         }
 
-        // Редактируем ответ на отработанный.
-        await FollowupAsync(resultMessage.ToString());
+        // Редактируем ответ.
+        await FollowupAsync(resultMessage.ToString(), ephemeral: true);
     }
 }

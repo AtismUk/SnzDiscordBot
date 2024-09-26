@@ -5,7 +5,7 @@ namespace SnzDiscordBot.Models.InteractionModels;
 
 public class MentionModel : IModal
 {
-    public string Title => "Укажите данные для оповещения"; 
+    public string Title => "Форма для создания оповещения"; 
     
     [InputLabel("Заголовок")]
     [ModalTextInput("title_input", minLength: 5, maxLength: 100, placeholder: "Ваш заголовок.")]

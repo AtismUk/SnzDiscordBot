@@ -5,13 +5,13 @@ namespace SnzDiscordBot.Models.InteractionModels;
 public class ApplicationModel : IModal
 {
     public string Title => "Форма заявки на вступления";
-
+    
     [InputLabel("Позывной")]
     [ModalTextInput("nick_input", placeholder: "Позывной", maxLength: 70)]
     public string Nick { get; set; } = string.Empty;
-
+    
     [InputLabel("Steam Id")]
-    [ModalTextInput("steamid_input", placeholder: "Steam Id", maxLength: 70)]
+    [ModalTextInput("steamid_input", placeholder: "Steam Id", maxLength: 17)]
     public string SteamId { get; set; } = string.Empty;
     
     [InputLabel("От куда вы о нас узнали")]

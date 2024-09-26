@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 namespace SnzDiscordBot.DataBase.Entities;
 
 [Table("member_awards")]
-[Index(nameof(UserId), nameof(AwardDescriptor), IsUnique = true)]
+[Index(nameof(GuildId), nameof(UserId), nameof(AwardDescriptor))]
 public class MemberAwardEntity : BaseEntity
 {
     public MemberAwardEntity(string awardDescriptor, ulong userId, ulong guildId, DateTime awardDate)
@@ -15,13 +15,14 @@ public class MemberAwardEntity : BaseEntity
         GuildId = guildId;
         AwardDate = awardDate;
     }
-    public ulong GuildId { get; }
+    public ulong GuildId { get; private set; }
     
-    [ForeignKey(nameof(AwardEntity.Descriptor))] public string AwardDescriptor { get; }
+    [MaxLength(50)]
+    [ForeignKey(nameof(AwardEntity.Descriptor))] public string AwardDescriptor { get; private set; }
     
-    [ForeignKey(nameof(MemberEntity.UserId))] public ulong UserId { get; }
+    [ForeignKey(nameof(MemberEntity.UserId))] public ulong UserId { get; private set; }
 
-    public DateTime AwardDate { get; }
+    public DateTime AwardDate { get; private set; }
     
     [MaxLength(500)]
     public string AwardReason { get; set; } = "Неизвестно";

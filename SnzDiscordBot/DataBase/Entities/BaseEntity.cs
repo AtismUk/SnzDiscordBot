@@ -5,6 +5,6 @@ namespace SnzDiscordBot.DataBase.Entities;
 
 public class BaseEntity
 {
-    [Key, Column(Order = 0)]
-    public int Id { get; } = 0;
+    [Column(Order = 0)]
+    public int Id { get; private set; } = 0;
 }

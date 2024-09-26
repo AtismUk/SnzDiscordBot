@@ -36,12 +36,12 @@ class Program
                 services.AddSingleton<IEventService, EventService>();
                 services.AddSingleton<IMemberService, MemberService>();
                 services.AddSingleton<ISettingsService, SettingsService>();
+                services.AddScoped<IBaseRepo, BaseRepo>();
                 
                 services.AddDbContext<AppDbContext>(options =>
                 {
-                    options.UseSqlite("Data Source=DataBase/bot.db");
+                    options.UseSqlite("Data Source=Database/bot.db");
                 });
-                services.AddScoped<IBaseRepo, BaseRepo>();
 
                 services.AddHostedService<DiscordBotHandler>();
             }).ConfigureLogging(x =>

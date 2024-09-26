@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 namespace SnzDiscordBot.DataBase.Entities;
 
 [Table("settings")]
-[Index(nameof(GuildId), IsUnique = true)]
+[Index(nameof(GuildId))]
 public class SettingsEntity : BaseEntity
 {
     public SettingsEntity(ulong guildId)
@@ -13,7 +13,7 @@ public class SettingsEntity : BaseEntity
         GuildId = guildId;
     }
 
-    [Key, Column(Order = 1)] public ulong GuildId { get; }
+    public ulong GuildId { get; private set; }
     
     public ulong AuditChannelId { get; set; } = 0;
     

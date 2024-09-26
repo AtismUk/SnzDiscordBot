@@ -15,13 +15,17 @@ public class SettingsService : ISettingsService
     public async Task<SettingsEntity?> GetSettingsAsync(ulong guildId)
     {
         // Пытаемся найти первую подходящую запись или создаем новую.
-        return await _baseRepo.FirstOrDefaultAsync<SettingsEntity>(s => s.GuildId == guildId) ?? await UpdateSettingsAsync(guildId);
+        return await _baseRepo.FirstOrDefaultAsync<SettingsEntity>(s => s.GuildId == guildId) ?? await UpdateSettingsAsync(guildId, requesterIsGetter: true);
     }
 
-    public async Task<SettingsEntity?> UpdateSettingsAsync(ulong guildId, ulong? auditChannelId = null, ulong? applicationChannelId = null, ulong? applicationAddRoleId = null, ulong? applicationRemoveRoleId = null, ulong? newsChannelId = null, ulong? eventsChannelId = null, ulong? scheduleChannelId = null)
+    public async Task<SettingsEntity?> UpdateSettingsAsync(ulong guildId, ulong? auditChannelId = null, ulong? applicationChannelId = null, ulong? applicationAddRoleId = null, ulong? applicationRemoveRoleId = null, ulong? newsChannelId = null, ulong? eventsChannelId = null, ulong? scheduleChannelId = null, bool requesterIsGetter = false)
     {
         // Пытаемся найти существующую для изменения или создаем новую.
-        var settings = await GetSettingsAsync(guildId) ?? new SettingsEntity(guildId);
+        SettingsEntity settings;
+        if (!requesterIsGetter)
+            settings = await GetSettingsAsync(guildId) ?? new SettingsEntity(guildId);
+        else
+            settings = new SettingsEntity(guildId);
         
         // Обновляем данные
         settings.AuditChannelId = auditChannelId ?? settings.AuditChannelId;

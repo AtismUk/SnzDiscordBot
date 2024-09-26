@@ -42,7 +42,7 @@ public class CommandHandler
         if (!result.IsSuccess)
         {
             var exec = (ExecuteResult)result;
-            await interactionContext.Interaction.RespondAsync($"{exec.ErrorReason}\n{exec.Exception}", ephemeral: true);
+            await interactionContext.Interaction.RespondAsync($"```{exec.ErrorReason}\n{exec.Exception}```", ephemeral: true);
         }
         
         await LogInChannel(componentCommandInfo, interactionContext, result);
@@ -53,7 +53,7 @@ public class CommandHandler
         if (!result.IsSuccess)
         {
             var exec = (ExecuteResult)result;
-            await interactionContext.Interaction.RespondAsync($"{exec.ErrorReason}\n{exec.Exception}", ephemeral: true);
+            await interactionContext.Interaction.RespondAsync($"```{exec.ErrorReason}\n{exec.Exception}```", ephemeral: true);
         }
         
         await LogInChannel(modalCommandInfo, interactionContext, result);
@@ -64,7 +64,7 @@ public class CommandHandler
         if (!result.IsSuccess)
         {
             var exec = (ExecuteResult)result;
-            await interactionContext.Interaction.RespondAsync($"{exec.ErrorReason}\n{exec.Exception}", ephemeral: true);
+            await interactionContext.Interaction.RespondAsync($"```{exec.ErrorReason}\n{exec.Exception}```", ephemeral: true);
         }
         
         await LogInChannel(contextCommandInfo, interactionContext, result);
@@ -75,7 +75,7 @@ public class CommandHandler
         if (!result.IsSuccess)
         {
             var exec = (ExecuteResult)result;
-            await interactionContext.Interaction.RespondAsync($"{exec.ErrorReason}\n{exec.Exception}", ephemeral: true);
+            await interactionContext.Interaction.RespondAsync($"```{exec.ErrorReason}\n{exec.Exception}```", ephemeral: true);
         }
 
         await LogInChannel(slashCommand, interactionContext, result);

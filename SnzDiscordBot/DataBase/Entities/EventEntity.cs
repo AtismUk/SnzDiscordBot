@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 namespace SnzDiscordBot.DataBase.Entities;
 
 [Table("events")]
-[Index(nameof(MessageId), nameof(GuildId), IsUnique = true)]
+[Index(nameof(GuildId), nameof(ChannelId),nameof(MessageId))]
 public class EventEntity : BaseEntity
 {
     public EventEntity(ulong guildId, ulong channelId, ulong messageId)
@@ -15,11 +15,11 @@ public class EventEntity : BaseEntity
         MessageId = messageId;
     }
 
-    public ulong MessageId { get; }
+    public ulong MessageId { get; private set; }
 
-    public ulong GuildId { get; }
+    public ulong GuildId { get; private set; }
 
-    public ulong ChannelId { get; }
+    public ulong ChannelId { get; private set; }
     
     public DateTime StartAt { get; set; } = DateTime.MinValue;
     

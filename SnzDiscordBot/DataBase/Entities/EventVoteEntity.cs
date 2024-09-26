@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 namespace SnzDiscordBot.DataBase.Entities;
 
 [Table("event_votes")]
-[Index(nameof(EventMessageId), nameof(UserId), IsUnique = true)]
+[Index(nameof(GuildId), nameof(EventMessageId))]
 public class EventVoteEntity : BaseEntity
 {
     public EventVoteEntity(ulong eventMessageId, ulong userId, ulong guildId)
@@ -14,11 +14,11 @@ public class EventVoteEntity : BaseEntity
         GuildId = guildId;
     }
 
-    public ulong GuildId { get; }
+    public ulong GuildId { get; private set; }
     [ForeignKey(nameof(EventEntity.MessageId))]
-    public ulong EventMessageId { get; }
+    public ulong EventMessageId { get; private set; }
     [ForeignKey(nameof(MemberEntity.UserId))]
-    public ulong UserId { get; }
+    public ulong UserId { get; private set; }
     public VoteType Type { get; set; } = VoteType.Unknown;
 
 }

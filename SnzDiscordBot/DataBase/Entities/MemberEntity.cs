@@ -5,7 +5,8 @@ using Microsoft.EntityFrameworkCore;
 namespace SnzDiscordBot.DataBase.Entities;
 
 [Table("members")]
-[Index(nameof(UserId), nameof(GuildId), IsUnique = true)]
+[PrimaryKey(nameof(GuildId), nameof(UserId))]
+[Index(nameof(GuildId), nameof(UserId))]
 public class MemberEntity : BaseEntity
 {
     public MemberEntity(ulong guildId, ulong userId)
@@ -14,18 +15,12 @@ public class MemberEntity : BaseEntity
         GuildId = guildId;
     }
     
-    [Key, Column(Order = 1)] public ulong GuildId { get; }
-    
-    [Key, Column(Order = 2)] public ulong UserId { get; }
-    
+    public ulong GuildId { get; private set; }
+    public ulong UserId { get; private set; }
     [MaxLength(100)] public string Username { get; set; } = "Не определен";
-    
     public Rank Rank { get; set; } = Rank.Unknown;
-    
     public Group Group { get; set; } = Group.Unknown;
-    
     public List<Role> Roles { get; set; } = [];
-    
     public Status Status { get; set; } = Status.Unknown;
 }
 

@@ -229,8 +229,7 @@ public class ApplicationModule : InteractionModuleBase<SocketInteractionContext>
     {
         #region Проверки
 
-        var interaction = ;
-        if (Context.Interaction )
+        if (Context.Interaction is not IComponentInteraction interaction)
         {
             await RespondAsync("Ошибка! Не удалось найти интеракцию.", ephemeral: true);
             return;

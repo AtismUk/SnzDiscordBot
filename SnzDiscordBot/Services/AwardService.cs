@@ -14,7 +14,7 @@ public class AwardService : IAwardService
         _baseRepo = baseRepo;
     }
 
-    public async Task<AwardEntity?> UpdateAwardAsync(ulong guildId, string descriptor, int? priority = null, string? description = null, string? name = null, string? imageUrl = null)
+    public async Task<AwardEntity?> AddUpdateAwardAsync(ulong guildId, string descriptor, int? priority = null, string? description = null, string? name = null, string? imageUrl = null)
     {
         // Пытаемся найти существующую запись для изменения или создаем новую.
         var award = await GetAwardAsync(guildId, descriptor) ?? new AwardEntity(guildId, descriptor);
@@ -44,19 +44,18 @@ public class AwardService : IAwardService
         // Пытаемся найти первую подходящую запись.
         return await _baseRepo.FirstOrDefaultAsync<AwardEntity>(x => x.GuildId == guildId && x.Descriptor == descriptor);
     }
-    
 
-    public async Task<(MemberEntity?, AwardEntity?, MemberAwardEntity?)> UpdateMemberAwardAsync(ulong guildId, ulong userId, string descriptor, string? awardReason = null)
+    public async Task<(MemberEntity?, AwardEntity?, MemberAwardEntity?)> AddUpdateMemberAwardAsync(ulong guildId, ulong userId, string descriptor, string? awardReason = null)
     {
         // Ищем запись целевого пользователя
         var member = await _memberService.GetMemberAsync(guildId, userId);
-        if (member == null) return (null, null, null);
+        if (member == null) return (member, null, null);
 
         // Ищем запись целевой награды
         var award = await GetAwardAsync(guildId, descriptor);
-        if (award == null) return (member, null, null);
+        if (award == null) return (member, award, null);
 
-        // Ищем целевое награждение
+        // Ищем целевое награждение или создаем новое
         var memberAward = await _baseRepo.FirstOrDefaultAsync<MemberAwardEntity>(x => x.UserId == userId && x.AwardDescriptor == descriptor) ?? new MemberAwardEntity(descriptor, userId, guildId, DateTime.Now);
         
         // Обновляем данные
@@ -70,11 +69,11 @@ public class AwardService : IAwardService
     {
         // Ищем запись целевого пользователя
         var member = await _memberService.GetMemberAsync(guildId, userId);
-        if (member == null) return (null, null, null); // Если записи не существует, то возвращаем null-ы
+        if (member == null) return (member, null, null); // Если записи не существует, то возвращаем null-ы
         
         // Ищем запись целевой награды
         var award = await GetAwardAsync(guildId, descriptor);
-        if (award == null) return (member, null, null); // Если записи не существует, то возвращаем пользователя и null-ы
+        if (award == null) return (member, award, null); // Если записи не существует, то возвращаем пользователя и null-ы
         
         // Ищем целевое награждение
         var memberAward = await _baseRepo.FirstOrDefaultAsync<MemberAwardEntity>(x => x.UserId == userId);
@@ -88,7 +87,7 @@ public class AwardService : IAwardService
     {
         // Ищем запись целевого пользователя
         var member = await _memberService.GetMemberAsync(guildId, userId);
-        if (member == null) return (null, null);
+        if (member == null) return (member, null);
         
         // Ищем записи награждений
         var memberAwards = await _baseRepo.GetAllEntityAsync<MemberAwardEntity>(x => x.UserId == userId && x.GuildId == guildId);

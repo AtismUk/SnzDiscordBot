@@ -6,7 +6,7 @@ public interface ISettingsService
 {
     Task<SettingsEntity?> GetSettingsAsync(ulong guildId);
 
-    Task<SettingsEntity?> UpdateSettingsAsync(ulong guildId,
+    Task<SettingsEntity?> AddUpdateSettingsAsync(ulong guildId,
         ulong? auditChannelId = null, 
         ulong? applicationChannelId = null, 
         ulong? applicationAddRoleId = null,

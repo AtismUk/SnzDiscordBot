@@ -21,7 +21,7 @@ public class EventEntity : BaseEntity
 
     public ulong ChannelId { get; private set; }
     
-    public DateTime StartAt { get; set; } = DateTime.MinValue;
+    public DateTime StartAt { get; set; } = DateTime.MaxValue;
     
     [MaxLength(100)]
     public string Title { get; set; } = string.Empty;

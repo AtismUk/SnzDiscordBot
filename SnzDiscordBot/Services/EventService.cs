@@ -20,7 +20,7 @@ public class EventService : IEventService
         return await _baseRepo.FirstOrDefaultAsync<EventEntity>(s => s.GuildId == guildId && s.ChannelId == channelId && s.MessageId == messageId);
     }
 
-    public async Task<EventEntity?> UpdateEventAsync(ulong guildId, ulong channelId, ulong messageId, DateTime? startAt = null)
+    public async Task<EventEntity?> AddUpdateEventAsync(ulong guildId, ulong channelId, ulong messageId, DateTime? startAt = null)
     {
         // Пытаемся найти существующую запись для изменения или создаем новую.
         var eventEntity = await GetEventAsync(guildId, channelId, messageId) ?? new EventEntity(guildId, channelId, messageId);
@@ -58,7 +58,7 @@ public class EventService : IEventService
         return (eventEntity, member, vote);
     }
     
-    public async Task<(EventEntity?, MemberEntity?, EventVoteEntity?)> UpdateVoteAsync(ulong guildId, ulong channelId, ulong messageId, ulong userId, VoteType voteType)
+    public async Task<(EventEntity?, MemberEntity?, EventVoteEntity?)> AddUpdateVoteAsync(ulong guildId, ulong channelId, ulong messageId, ulong userId, VoteType voteType)
     {
         // Ищем запись целевого события
         var eventEntity = await GetEventAsync(guildId, channelId, messageId);

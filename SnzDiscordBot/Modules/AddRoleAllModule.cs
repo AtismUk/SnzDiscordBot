@@ -62,7 +62,7 @@ public class AddRoleAllModule : InteractionModuleBase<SocketInteractionContext>
 
         #endregion
         
-        #region Выдаем пользователям роль.
+        #region Выдаем пользователям роль. Если нужно изменяем статус (БД).
 
         int addedCount = 0;
         int changedStatusCount = 0;
@@ -79,7 +79,7 @@ public class AddRoleAllModule : InteractionModuleBase<SocketInteractionContext>
                 
                 await user.AddRoleAsync(add_role);
 
-                if (await _memberService.UpdateMemberAsync(Context.Guild.Id, user.Id, status: targetStatus) == null)
+                if (await _memberService.AddUpdateMemberAsync(Context.Guild.Id, user.Id, status: targetStatus) == null)
                 {
                     errorBuilder.AppendLine($"Не удалось изменить статус пользователю: {user.Mention}");
                 }

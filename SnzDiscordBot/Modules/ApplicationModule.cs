@@ -160,7 +160,7 @@ public class ApplicationModule : InteractionModuleBase<SocketInteractionContext>
 
         #endregion
 
-        var member = await _memberService.UpdateMemberAsync(Context.Guild.Id, user.Id, embedProper.Fields[0].Value, Rank.Rookie, Group.Unknown, [], Status.Active);
+        var member = await _memberService.AddUpdateMemberAsync(Context.Guild.Id, user.Id, embedProper.Fields[0].Value, Rank.Rookie, Group.Unknown, [], Status.Active);
         
         #region Изменение Embed
 
